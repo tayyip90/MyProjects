@@ -1,41 +1,41 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="ChessGame.ChessLogic">
+  <Class Name="ChessGame.ChessLogic" Collapsed="true">
     <Position X="0.75" Y="2" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>ChessLogic.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ChessGame.Player">
+  <Class Name="ChessGame.Player" Collapsed="true">
     <Position X="3.5" Y="2" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Player.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ChessGame.ChessFigur">
+  <Class Name="ChessGame.ChessFigur" Collapsed="true">
     <Position X="9" Y="2" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAgAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAiAAAAAA=</HashCode>
       <FileName>ChessFigur.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ChessGame.ChessGameboard">
+  <Class Name="ChessGame.ChessGameboard" Collapsed="true">
     <Position X="6.25" Y="2" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>ChessGameboard.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ChessGame.Game">
+  <Class Name="ChessGame.Game" Collapsed="true">
     <Position X="11.75" Y="2" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAA=</HashCode>
       <FileName>Game.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ChessGame.KingFigur">
+  <Class Name="ChessGame.KingFigur" Collapsed="true">
     <Position X="8.25" Y="4" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
@@ -46,42 +46,42 @@
     <Position X="7.75" Y="0.75" Width="1.5" />
     <TypeIdentifier />
   </Class>
-  <Class Name="ChessGame.QueenFigur">
+  <Class Name="ChessGame.QueenFigur" Collapsed="true">
     <Position X="11.25" Y="4" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>QueenFigur.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ChessGame.RookFigur">
+  <Class Name="ChessGame.RookFigur" Collapsed="true">
     <Position X="9.75" Y="4" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>RookFigur.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ChessGame.BishopFigur">
+  <Class Name="ChessGame.BishopFigur" Collapsed="true">
     <Position X="12.75" Y="4" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>BishopFigur.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ChessGame.KnightFigur">
+  <Class Name="ChessGame.KnightFigur" Collapsed="true">
     <Position X="6.75" Y="4" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>KnightFigur.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ChessGame.PawnFigur">
+  <Class Name="ChessGame.PawnFigur" Collapsed="true">
     <Position X="5.25" Y="4" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>PawnFigur.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ChessGame.ChessGameboardField">
+  <Class Name="ChessGame.ChessGameboardField" Collapsed="true">
     <Position X="14" Y="2" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
