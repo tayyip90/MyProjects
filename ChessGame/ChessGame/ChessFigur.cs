@@ -1,21 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using static ChessGame.Constants;
 
 namespace ChessGame
 {
     public class ChessFigur
     {
         private string figurSymbol;
-        private string color;
+        private ColorEnum color;
 
-        public ChessFigur(string symbol, string color)
+        public ChessFigur(string symbol, ColorEnum color)
         {
             this.figurSymbol = symbol;
             this.color = color;
         }
 
-        public string getColor()
+        public ColorEnum getColor()
         {
             return this.color;
         }

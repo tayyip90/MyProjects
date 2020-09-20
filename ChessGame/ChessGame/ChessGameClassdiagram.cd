@@ -31,14 +31,14 @@
   <Class Name="ChessGame.Game" Collapsed="true">
     <Position X="11.75" Y="2" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAgAAA=</HashCode>
       <FileName>Game.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ChessGame.KingFigur" Collapsed="true">
     <Position X="8.25" Y="4" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAA=</HashCode>
       <FileName>KingFigur.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -86,6 +86,20 @@
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>ChessGameboardField.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ChessGame.Constants">
+    <Position X="16.75" Y="1.75" Width="1.5" />
+    <NestedTypes>
+      <Enum Name="ChessGame.Constants.ColorEnum" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Constants.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Constants.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />
