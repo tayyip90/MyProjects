@@ -5,12 +5,12 @@ using static ChessGame.Constants;
 
 namespace ChessGame
 {
-    public class ChessFigur
+    public abstract class ChessFigur
     {
-        private string figurSymbol;
+        private char figurSymbol;
         private ColorEnum color;
 
-        public ChessFigur(string symbol, ColorEnum color)
+        public ChessFigur(char symbol, ColorEnum color)
         {
             this.figurSymbol = symbol;
             this.color = color;
@@ -21,7 +21,7 @@ namespace ChessGame
             return this.color;
         }
 
-        public string getSymbol()
+        public char getSymbol()
         {
             return this.figurSymbol;
         }

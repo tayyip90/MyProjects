@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using static ChessGame.Constants;
 
 namespace ChessGame
 {
     public class KingFigur : ChessFigur
     {
-        private const string SYMBOL = "K";
-
-        public KingFigur(string color) : base(SYMBOL, color)
+        public KingFigur(ColorEnum color) : base(KINGSYMBOL, color)
         {
 
         }
