@@ -8,19 +8,19 @@
     ".NETCoreApp,Version=v3.1": []
   },
   "packageFolders": {
-    "C:\\Users\\tatli\\.nuget\\packages\\": {}
+    "C:\\Users\\Tayyip\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\tatli\\OneDrive\\Documents\\GitHub\\MyProjects\\ChessGame\\ChessGame\\ChessGame.csproj",
+      "projectUniqueName": "C:\\Users\\Tayyip\\Source\\Repos\\tayyip90\\MyProjects\\ChessGame\\ChessGame\\ChessGame.csproj",
       "projectName": "ChessGame",
-      "projectPath": "C:\\Users\\tatli\\OneDrive\\Documents\\GitHub\\MyProjects\\ChessGame\\ChessGame\\ChessGame.csproj",
-      "packagesPath": "C:\\Users\\tatli\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\tatli\\OneDrive\\Documents\\GitHub\\MyProjects\\ChessGame\\ChessGame\\obj\\",
+      "projectPath": "C:\\Users\\Tayyip\\Source\\Repos\\tayyip90\\MyProjects\\ChessGame\\ChessGame\\ChessGame.csproj",
+      "packagesPath": "C:\\Users\\Tayyip\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Tayyip\\Source\\Repos\\tayyip90\\MyProjects\\ChessGame\\ChessGame\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\tatli\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Tayyip\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -32,6 +32,7 @@
       },
       "frameworks": {
         "netcoreapp3.1": {
+          "targetAlias": "netcoreapp3.1",
           "projectReferences": {}
         }
       },
@@ -43,6 +44,7 @@
     },
     "frameworks": {
       "netcoreapp3.1": {
+        "targetAlias": "netcoreapp3.1",
         "imports": [
           "net461",
           "net462",
@@ -53,18 +55,12 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "downloadDependencies": [
-          {
-            "name": "Microsoft.AspNetCore.App.Ref",
-            "version": "[3.1.2, 3.1.2]"
-          }
-        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.300\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.101\\RuntimeIdentifierGraph.json"
       }
     }
   }

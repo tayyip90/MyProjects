@@ -5,9 +5,9 @@ using static ChessGame.Constants;
 
 namespace ChessGame
 {
-    public class RookFigur : ChessFigur
+    public class RookFigur : ChessFigure
     {
-        public RookFigur(ColorEnum color) : base(ROOKSYMBOL, color)
+        public RookFigur(ColorEnum color) : base(ROOKSYMBOL, color, FigurTyp.Rook)
         {
 
         }

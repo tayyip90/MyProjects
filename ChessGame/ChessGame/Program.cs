@@ -6,7 +6,7 @@ namespace ChessGame
     {
         static void Main(string[] args)
         {
-            //Console.WriteLine("Hello World!");
+            Game chess = new Game();
         }
     }
 }

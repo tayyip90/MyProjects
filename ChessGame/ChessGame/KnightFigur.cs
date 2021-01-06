@@ -5,8 +5,8 @@ using static ChessGame.Constants;
 
 namespace ChessGame
 {
-    public class KnightFigur : ChessFigur
+    public class KnightFigur : ChessFigure
     {
-        public KnightFigur(ColorEnum color) : base(KNIGHTSYMBOL, color) { }
+        public KnightFigur(ColorEnum color) : base(KNIGHTSYMBOL, color, FigurTyp.Knight) { }
     }
 }

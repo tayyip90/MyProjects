@@ -5,9 +5,11 @@ using static ChessGame.Constants;
 
 namespace ChessGame
 {
-    public class QueenFigur : ChessFigur
+    public class QueenFigur : ChessFigure
     {
-        public QueenFigur(ColorEnum color) : base(QUEENSYMBOL, color)
-            {}
+        public QueenFigur(ColorEnum color) : base(QUEENSYMBOL, color, FigurTyp.Queen)
+        {
+        
+        }
     }
 }

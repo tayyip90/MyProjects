@@ -1,10 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "mLmI31dEsIwBlfr6c7PDXv5/kjnaM7wYTfwRXtBWEccgQxACCv3Yw2a8Ea/MaIQfWnyPP34Q2Tg9EBmX/923Bg==",
+  "dgSpecHash": "39IppVqM78fEyg7eL9w9KZO3idMpcx2rzd+5s8g6sVctfwhg4UCfWf40YvbBR5bymtoPo9TzOn+9ZUmcwfalwQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\tatli\\OneDrive\\Documents\\GitHub\\MyProjects\\ChessGame\\ChessGame\\ChessGame.csproj",
-  "expectedPackageFiles": [
-    "C:\\Users\\tatli\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\3.1.2\\microsoft.aspnetcore.app.ref.3.1.2.nupkg.sha512"
-  ],
+  "projectFilePath": "C:\\Users\\Tayyip\\Source\\Repos\\tayyip90\\MyProjects\\ChessGame\\ChessGame\\ChessGame.csproj",
+  "expectedPackageFiles": [],
   "logs": []
 }
