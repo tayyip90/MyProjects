@@ -24,5 +24,13 @@ namespace ChessGame
         public const char KNIGHTSYMBOL = 'N';
         public const char ROOKSYMBOL = 'R';
         public const char BISHOPSYMBOL = 'B';
+
+        public const char QUIT = 'q';
+        public const char NEWGAME = 'n';
+
+        public const string PLACEHOLDERSTRINGSTARS =  "*******************************************************";
+        public const string TITLE =             "* Chess Game                                          *";
+
+        public const string QUITSTRING = "See you soon :'( ...";
     }
 }

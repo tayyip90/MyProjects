@@ -7,6 +7,6 @@ namespace ChessGame
 {
     public class KnightFigur : ChessFigure
     {
-        public KnightFigur(ColorEnum color) : base(KNIGHTSYMBOL, color, FigurTyp.Knight) { }
+        public KnightFigur(ColorEnum color, uint figureId) : base(KNIGHTSYMBOL, color, FigurTyp.Knight, figureId) { }
     }
 }
