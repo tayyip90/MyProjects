@@ -23,8 +23,14 @@ namespace ChessGame
         private bool isGameFinished;
         private bool isPlayerQuit;
 
+        private bool newGame;
+        private bool quit;
+
         private string input;
         private bool inputIsCorrect;
+
+        private Field selectedField;
+        private Field destinationField;
 
         private uint figureId;
 
@@ -41,75 +47,111 @@ namespace ChessGame
 
             players = new Player[2];
 
-            printIntro();
+            newGame = false;
+            quit = false;
         }
 
-        public void printIntro()
+        public void start()
+        {
+            while (!quit) {
+
+                printIntro();
+
+                if (newGame)
+                {
+                    Console.Clear();
+
+                    Console.BackgroundColor = ConsoleColor.Blue;
+
+                    NewGame();
+                }
+            }
+
+            Console.Clear();
+            Console.WriteLine(Constants.QUITSTRING);
+            Console.WriteLine("");
+
+        }
+
+        private void printIntro()
         {
             inputIsCorrect = false;
-            Console.WriteLine(Constants.PLACEHOLDERSTRINGSTARS);
-            Console.WriteLine(Constants.TITLE);
-            Console.WriteLine(Constants.PLACEHOLDERSTRINGSTARS);
-            showMenu();
-
             char[] inputAsCharArray = null;
+
+            Console.Clear();
+
+            showMenu();
 
             while (!inputIsCorrect)
             {
                 input = Console.ReadLine();
 
-                inputAsCharArray = (input.ToLower()).ToCharArray();
-
-                if (input.Length == 1 & (inputAsCharArray[0] == Constants.NEWGAME || inputAsCharArray[0] == Constants.QUIT))
+                if (input != null)
                 {
-                    inputIsCorrect = true;                
-                }
-                else
-                {
-                    showMenu();
-                }
-            }
+                    inputAsCharArray = (input.ToLower()).ToCharArray();
 
-            if (inputAsCharArray != null)
-            {
-                if (inputAsCharArray[0] == Constants.NEWGAME)
-                {
-                    Console.Clear();
-                    Console.BackgroundColor = ConsoleColor.Blue;
-
-                    newGame();
-
-                    while (!isGameFinished & !isPlayerQuit)
+                    if (input.Length == 1 & inputAsCharArray[0] == Constants.NEWGAME)
                     {
-                        gameboard.printBoardWithFigures();
+                        inputIsCorrect = true;
+                        newGame = true;
+                    }
+                    else if (input.Length == 1 & inputAsCharArray[0] == Constants.QUIT)
+                    {
+                        inputIsCorrect = true;
+                        quit = true;
+                    }
+                    else if (input.Length == 1 & inputAsCharArray[0] == Constants.HELP)
+                    {
+                        displayInputFormat();
 
-                        input = Console.ReadLine();
-                        inputAsCharArray = (input.ToLower()).ToCharArray();
+                        Console.WriteLine();
+                        Console.Write("Press any Key to return to Menu ...");
+                        Console.ReadKey();
+
+                        Console.Clear();
+
+                        showMenu();
+                    }
+                    else
+                    {
+                        Console.Clear();
+
+                        showMenu();
                     }
                 }
-                else
-                {
-                    Console.Clear();
-                    Console.WriteLine(Constants.QUITSTRING);
-                    Console.WriteLine("");
-                }
-            }
-            else
-            {
-                Console.WriteLine("Sorry Something went wrong!");
             }
         }
 
-        public void showMenu()
+        private void displayInputIsEmptyOrHasNotTheRightFormat()
         {
+            Console.WriteLine("");
+            Console.WriteLine("Input was Empty or has not the right Format!");
+            Console.WriteLine("");
+            displayInputFormat();
+        }
+
+        private void displayInputFormat()
+        {
+            Console.WriteLine("");
+            Console.WriteLine("First type in the Row with a comma then the column");
+            Console.WriteLine("e.g. 5, c");
+            Console.WriteLine("");
+        }
+
+        private void showMenu()
+        {
+            Console.WriteLine(Constants.PLACEHOLDERSTRINGSTARS);
+            Console.WriteLine(Constants.TITLE);
+            Console.WriteLine(Constants.PLACEHOLDERSTRINGSTARS);
             Console.WriteLine("");
             Console.WriteLine("Enter ...");
             Console.WriteLine("... " + Constants.NEWGAME + " to start a New Game");
             Console.WriteLine("... " + Constants.QUIT + " to quit the App");
+            Console.WriteLine("... " + Constants.HELP + " to show help");
             Console.WriteLine("");
         }
 
-        public void newGame()
+        private void NewGame()
         {
             turnNumber = 1;
             playerTurn = Constants.ColorEnum.WHITE;
@@ -128,6 +170,37 @@ namespace ChessGame
 
             createWhitePlayerFigures();
             createBlackPlayerFigures();
+
+            char[] inputAsCharArray;
+
+            while (!isGameFinished & !isPlayerQuit)
+            {
+                Console.Clear();
+
+                gameboard.printBoardWithFigures();
+
+                displayInputFormat();
+
+                input = Console.ReadLine();
+
+                if (input == null)
+                {
+                    while (input == null)
+                    {
+                        displayInputIsEmptyOrHasNotTheRightFormat();
+
+                        input = Console.ReadLine();
+                    }
+                }
+                else
+                {
+
+                }
+
+                inputAsCharArray = (input.ToLower()).ToCharArray();
+            }
+
+            Console.BackgroundColor = ConsoleColor.Black;
         }
 
         private void createBlackPlayerFigures()

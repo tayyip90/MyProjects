@@ -27,10 +27,15 @@ namespace ChessGame
 
         public const char QUIT = 'q';
         public const char NEWGAME = 'n';
+        public const char HELP = 'h';
 
         public const string PLACEHOLDERSTRINGSTARS =  "*******************************************************";
         public const string TITLE =             "* Chess Game                                          *";
 
         public const string QUITSTRING = "See you soon :'( ...";
+
+        public const string SELECTEDFIELDISNOTOCCUPIED = "The Field you have selected is not occupied!";
+
+        public const string SELECTEDFIELDISOCCUPIEDWITHENEMYFIGURE = "The Field you have selected is occupied, but the Figure belongs to the Enemy!";
     }
 }
