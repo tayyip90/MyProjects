@@ -1,37 +1,30 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="ChessGame.ChessLogic" Collapsed="true">
-    <Position X="0.75" Y="2" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>ChessLogic.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="ChessGame.Player" Collapsed="true">
     <Position X="3.5" Y="2" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAACAAAAAAAAAAAA=</HashCode>
       <FileName>Player.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ChessGame.ChessFigure" Collapsed="true">
     <Position X="9" Y="2" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAgAAAAAAAAAAACAAAAAAgAAAAAACAAAAAiAAAAAA=</HashCode>
+      <HashCode>AAAAgAAAAAAAAACACAAAAAAgAAAAAACAAAAAiAAAAAA=</HashCode>
       <FileName>ChessFigure.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ChessGame.ChessGameboard" Collapsed="true">
     <Position X="6.25" Y="2" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>QACAAAAAAAAABAAAQAAAAAAAAAAABAAAAAAAIAAAAAA=</HashCode>
       <FileName>ChessGameboard.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ChessGame.Game" Collapsed="true">
     <Position X="11.75" Y="2" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAIAAABAAgAAA=</HashCode>
+      <HashCode>AAEQEQGgACAAAAAgAEABECEmRAAIADIAIBABgAAhBAA=</HashCode>
       <FileName>Game.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -109,15 +102,22 @@
       </Enum>
     </NestedTypes>
     <TypeIdentifier>
-      <HashCode>CAAAAAAAAIAEAAAEAEAAAIAAAAAQAAAAgAAAAAAAAAA=</HashCode>
+      <HashCode>CAAAAAAAAKAEwAAEAEAAAIAEAAAQAIAAgAABAgIAAAA=</HashCode>
       <FileName>Constants.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ChessGame.Field" Collapsed="true">
     <Position X="14" Y="2" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAQAAAAAAAAAAAEAAAAAAACQAAAAACAAAAAAgAAAAA=</HashCode>
+      <HashCode>AAAQgAAAAAAABAAEACAAAAACQAAAAACAAAAAAgAAAAA=</HashCode>
       <FileName>Field.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ChessGame.ChessLogic" Collapsed="true">
+    <Position X="0.75" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ChessLogic.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />

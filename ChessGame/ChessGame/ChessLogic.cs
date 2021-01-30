@@ -6,5 +6,11 @@ namespace ChessGame
 {
     public class ChessLogic
     {
+        public bool isFigureOccupiedAndFigureBelongsThePlayer(ChessGameboard gameboard, Constants.ColorEnum playerTurn, char row, char column)
+        {
+            bool fieldIsOccupiedWithTheSameColor = false;
+
+            return fieldIsOccupiedWithTheSameColor;
+        }
     }
 }

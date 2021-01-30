@@ -25,6 +25,10 @@ namespace ChessGame
             return string.Format("| {0,5}, {1,1} C: {2,5} |", row, column, color); 
         }
 
+        /// <summary>
+        /// Method to print the Field in the Console.
+        /// </summary>
+        /// <returns>a string that represents actual state of Field</returns>
         public string getSymbol()
         {
             string symbol = string.Empty;
