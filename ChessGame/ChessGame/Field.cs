@@ -60,6 +60,16 @@ namespace ChessGame
             }
         }
 
+        public bool getIsFieldOccupied()
+        {
+            return isFieldOccupied;
+        }
+
+        public ChessFigure getChessFigure()
+        {
+            return this.figureOnTheField;
+        }
+
         public void Reset()
         {
             isFieldOccupied = false;

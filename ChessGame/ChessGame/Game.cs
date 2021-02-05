@@ -22,6 +22,7 @@ namespace ChessGame
 
         private bool isGameFinished;
         private bool isPlayerQuit;
+        private bool isPlayerResetTurn;
 
         private bool newGame;
         private bool quit;
@@ -155,39 +156,72 @@ namespace ChessGame
 
             while (!isGameFinished & !isPlayerQuit)
             {
-                Console.Clear();
+                while (!figureIsChosen & !destinationFieldIsChosen) {
 
-                gameboard.printBoardWithFigures();
+                    Console.Clear();
 
-                while (!figureIsChosen)
-                {
-                    figureIsChosen = readField();
-                }
+                    gameboard.printBoardWithFigures();
 
-                while (!destinationFieldIsChosen)
-                {
-                    destinationFieldIsChosen = readField();
+                    while (!figureIsChosen)
+                    {
+                        figureIsChosen = selectFigure();
+                    }
+
+                    while (!destinationFieldIsChosen & figureIsChosen)
+                    {
+                        destinationFieldIsChosen = selectDestination();
+                    }
                 }
             }
 
             Console.BackgroundColor = ConsoleColor.Black;
         }
 
-        private bool readField()
+        private bool selectDestination()
         {
             inputIsCorrect = false;
             bool fieldIsChosen;
+            row = ' ';
+            column = ' ';
+            int rowNumber = -1;
+            int columnNumber = -1;
 
-            while (!inputIsCorrect | isPlayerQuit)
+            while (!inputIsCorrect | !isPlayerQuit | !isPlayerResetTurn)
             {
+                input = Console.ReadKey().KeyChar;
 
+                if (input == Constants.QUIT)
+                {
+                    isPlayerQuit = true;
+                }else if (input == Constants.RESETTURN)
+                {
+                    isPlayerResetTurn = true;
+                }
+                else
+                {
+                    rowNumber = Constants.convertRowCharToRowNumberForGameboard(input);
+
+                    if (rowNumber != -1) inputIsCorrect = true;
+                }
             }
 
             inputIsCorrect = false;
 
-            while (!inputIsCorrect | isPlayerQuit)
+            while (!inputIsCorrect | !isPlayerQuit | !isPlayerResetTurn)
             {
+                if (input == Constants.QUIT)
+                {
+                    isPlayerQuit = true;
+                }else if (input == Constants.RESETTURN)
+                {
+                    isPlayerResetTurn = true;
+                }
+                else
+                {
+                    columnNumber = Constants.convertColumnCharToColumnNumberForGameboard(input);
 
+                    if (columnNumber != -1) inputIsCorrect = true;
+                }
             }
 
             if (isPlayerQuit)
@@ -196,7 +230,60 @@ namespace ChessGame
             }
             else
             {
-                fieldIsChosen = logic.isFigureOccupiedAndFigureBelongsThePlayer(gameboard, playerTurn, row, column);
+                fieldIsChosen = logic.isEmptyOrEnemyField(gameboard, playerTurn,rowNumber, columnNumber);
+            }
+
+            return figureIsChosen;
+        }
+
+        private bool selectFigure()
+        {
+            inputIsCorrect = false;
+            bool fieldIsChosen;
+            row = ' ';
+            column = ' ';
+            int rowNumber = -1;
+            int columnNumber = -1;
+
+            while (!inputIsCorrect | isPlayerQuit)
+            {
+                input = Console.ReadKey().KeyChar;
+
+                if (input == Constants.QUIT)
+                {
+                    isPlayerQuit = true;
+                }
+                else
+                {
+                    rowNumber = Constants.convertRowCharToRowNumberForGameboard(input);
+
+                    if (rowNumber != -1) inputIsCorrect = true;
+                }
+            }
+
+            inputIsCorrect = false;
+
+            while (!inputIsCorrect | isPlayerQuit)
+            {
+                if (input == Constants.QUIT)
+                {
+                    isPlayerQuit = true;
+                }
+                else
+                {
+                    columnNumber = Constants.convertColumnCharToColumnNumberForGameboard(input);
+
+                    if(columnNumber != -1) inputIsCorrect = true;
+                }
+            }
+
+            if (isPlayerQuit)
+            {
+                fieldIsChosen = false;
+            }
+            else
+            {
+                fieldIsChosen = logic.isFigureOccupiedAndFigureBelongsThePlayer(gameboard, playerTurn, rowNumber, columnNumber);
             }
 
             return fieldIsChosen;
