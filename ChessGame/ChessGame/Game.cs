@@ -60,14 +60,11 @@ namespace ChessGame
 
         public void start()
         {
-            while (!quit) {
+            printIntro();
 
-                printIntro();
-
-                if (newGame)
-                {
-                    NewGame();
-                }
+            if (newGame)
+            {
+                NewGame();
             }
 
             Console.Clear();
@@ -156,25 +153,58 @@ namespace ChessGame
 
             while (!isGameFinished & !isPlayerQuit)
             {
-                while (!figureIsChosen & !destinationFieldIsChosen) {
+                while (!figureIsChosen & !destinationFieldIsChosen & !isPlayerQuit) {
+
+                    if (isPlayerResetTurn) isPlayerResetTurn = false;
 
                     Console.Clear();
 
                     gameboard.printBoardWithFigures();
 
-                    while (!figureIsChosen)
+                    printTextSelectFigureForPlayer();
+
+                    while (!figureIsChosen & !isPlayerResetTurn & !isPlayerQuit)
                     {
                         figureIsChosen = selectFigure();
                     }
 
-                    while (!destinationFieldIsChosen & figureIsChosen)
+                    printTextSelectDestinationField();
+
+                    if (figureIsChosen)
                     {
-                        destinationFieldIsChosen = selectDestination();
+                        while (!destinationFieldIsChosen & !isPlayerResetTurn & !isPlayerQuit)
+                        {
+                            destinationFieldIsChosen = selectDestination();
+                        }
                     }
                 }
+
+                Console.WriteLine("Next player!");
+                setNextPlayer();
             }
 
             Console.BackgroundColor = ConsoleColor.Black;
+
+            if (isPlayerQuit)
+            {
+                Console.WriteLine("Player has quit the Game!");
+            }
+        }
+
+        private void setNextPlayer()
+        {
+            figureIsChosen = false;
+            destinationFieldIsChosen = false;
+        }
+
+        private void printTextSelectDestinationField()
+        {
+            Console.WriteLine("Select the Destination Field!");
+        }
+
+        private void printTextSelectFigureForPlayer()
+        {
+            Console.WriteLine("Select your Figure, that you want to move!");
         }
 
         private bool selectDestination()
@@ -186,16 +216,23 @@ namespace ChessGame
             int rowNumber = -1;
             int columnNumber = -1;
 
-            while (!inputIsCorrect | !isPlayerQuit | !isPlayerResetTurn)
+            while (!inputIsCorrect & !isPlayerQuit & !isPlayerResetTurn)
             {
+                Console.WriteLine("Type in the row of the Destination Field!");
+                Console.WriteLine("Please Type a Number between 1 to 8!");
+
                 input = Console.ReadKey().KeyChar;
+                Console.WriteLine();
 
                 if (input == Constants.QUIT)
                 {
                     isPlayerQuit = true;
-                }else if (input == Constants.RESETTURN)
+                }
+                else if (input == Constants.RESETTURN)
                 {
                     isPlayerResetTurn = true;
+                    figureIsChosen = false;
+                    destinationFieldIsChosen = false;
                 }
                 else
                 {
@@ -207,14 +244,23 @@ namespace ChessGame
 
             inputIsCorrect = false;
 
-            while (!inputIsCorrect | !isPlayerQuit | !isPlayerResetTurn)
+            while (!inputIsCorrect & !isPlayerQuit & !isPlayerResetTurn)
             {
+                Console.WriteLine("Type in the column, where your Figure is occupied!");
+                Console.WriteLine("Please Type a character between a to h!");
+
+                input = Console.ReadKey().KeyChar;
+                Console.WriteLine();
+
                 if (input == Constants.QUIT)
                 {
                     isPlayerQuit = true;
-                }else if (input == Constants.RESETTURN)
+                }
+                else if (input == Constants.RESETTURN)
                 {
                     isPlayerResetTurn = true;
+                    figureIsChosen = false;
+                    destinationFieldIsChosen = false;
                 }
                 else
                 {
@@ -224,7 +270,7 @@ namespace ChessGame
                 }
             }
 
-            if (isPlayerQuit)
+            if (isPlayerQuit | isPlayerResetTurn)
             {
                 fieldIsChosen = false;
             }
@@ -233,7 +279,7 @@ namespace ChessGame
                 fieldIsChosen = logic.isEmptyOrEnemyField(gameboard, playerTurn,rowNumber, columnNumber);
             }
 
-            return figureIsChosen;
+            return fieldIsChosen;
         }
 
         private bool selectFigure()
@@ -245,13 +291,23 @@ namespace ChessGame
             int rowNumber = -1;
             int columnNumber = -1;
 
-            while (!inputIsCorrect | isPlayerQuit)
+            while (!inputIsCorrect & !isPlayerQuit & !isPlayerResetTurn)
             {
+                Console.WriteLine("Type in the row, where your Figure is occupied!");
+                Console.WriteLine("Please Type a Number between 1 to 8!");
+
                 input = Console.ReadKey().KeyChar;
+                Console.WriteLine();
 
                 if (input == Constants.QUIT)
                 {
                     isPlayerQuit = true;
+                }
+                else if (input == Constants.RESETTURN)
+                {
+                    isPlayerResetTurn = true;
+                    figureIsChosen = false;
+                    destinationFieldIsChosen = false;
                 }
                 else
                 {
@@ -263,21 +319,33 @@ namespace ChessGame
 
             inputIsCorrect = false;
 
-            while (!inputIsCorrect | isPlayerQuit)
+            while (!inputIsCorrect & !isPlayerQuit & !isPlayerResetTurn)
             {
+                Console.WriteLine("Type in the column, where your Figure is occupied!");
+                Console.WriteLine("Please Type a character between a to h!");
+
+                input = Console.ReadKey().KeyChar;
+                Console.WriteLine();
+
                 if (input == Constants.QUIT)
                 {
                     isPlayerQuit = true;
+                }
+                else if (input == Constants.RESETTURN)
+                {
+                    isPlayerResetTurn = true;
+                    figureIsChosen = false;
+                    destinationFieldIsChosen = false;
                 }
                 else
                 {
                     columnNumber = Constants.convertColumnCharToColumnNumberForGameboard(input);
 
-                    if(columnNumber != -1) inputIsCorrect = true;
+                    if (columnNumber != -1) inputIsCorrect = true;
                 }
             }
 
-            if (isPlayerQuit)
+            if (isPlayerQuit | isPlayerResetTurn)
             {
                 fieldIsChosen = false;
             }
