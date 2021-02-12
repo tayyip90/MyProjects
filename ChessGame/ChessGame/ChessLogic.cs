@@ -6,38 +6,36 @@ namespace ChessGame
 {
     public class ChessLogic
     {
-        public bool isFigureOccupiedAndFigureBelongsThePlayer(ChessGameboard gameboard, Constants.ColorEnum playerTurn, int rowNumber, int columnNumber)
+        public bool isFieldOccupied(ChessGameboard gameboard, int rowNumber, int columnNumber)
         {
-            bool fieldIsOccupiedWithTheSameColor = false;
-
-            if(gameboard.getBoard()[rowNumber, columnNumber].getIsFieldOccupied())
-            {
-                if(gameboard.getBoard()[rowNumber, columnNumber].getChessFigure().getColor() == playerTurn)
-                {
-                    fieldIsOccupiedWithTheSameColor = true;
-                }
-            }
-
-            return fieldIsOccupiedWithTheSameColor;
+            return gameboard.getBoard()[rowNumber, columnNumber].getIsFieldOccupied();
         }
 
-        public bool isEmptyOrEnemyField(ChessGameboard gameboard, Constants.ColorEnum playerTurn, int rowNumber, int columnNumber)
+        public bool checkWhetherFigureBelongsPlayer(ChessGameboard gameboard, Constants.ColorEnum playerTurn, int rowNumber, int columnNumber)
         {
-            bool fieldIsEmptyOrOccupiedWithEnemyFigure = false;
+            bool sameColor = false;
+
+            if (gameboard.getBoard()[rowNumber, columnNumber].getChessFigure().getColor() == playerTurn)
+            {
+                sameColor = true;
+            }
+
+            return sameColor;
+        }
+
+        public bool isEnemyField(ChessGameboard gameboard, Constants.ColorEnum playerTurn, int rowNumber, int columnNumber)
+        {
+            bool fieldIsOccupiedWithEnemyFigure = false;
 
             if (gameboard.getBoard()[rowNumber, columnNumber].getIsFieldOccupied())
             {
                 if (gameboard.getBoard()[rowNumber, columnNumber].getChessFigure().getColor() != playerTurn)
                 {
-                    fieldIsEmptyOrOccupiedWithEnemyFigure = true;
+                    fieldIsOccupiedWithEnemyFigure = true;
                 }
             }
-            else
-            {
-                fieldIsEmptyOrOccupiedWithEnemyFigure = true;
-            }
 
-            return fieldIsEmptyOrOccupiedWithEnemyFigure;
+            return fieldIsOccupiedWithEnemyFigure;
         }
     }
 }

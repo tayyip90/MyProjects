@@ -33,8 +33,10 @@ namespace ChessGame
         private char input;
         private bool inputIsCorrect;
 
-        private Field selectedField;
-        private Field destinationField;
+        private int selectedFigureX;
+        private int selectedFigureY;
+        private int destinationFieldX;
+        private int destinationFieldY;
 
         private uint figureId;
 
@@ -154,7 +156,7 @@ namespace ChessGame
             while (!isGameFinished & !isPlayerQuit)
             {
                 while (!figureIsChosen & !destinationFieldIsChosen & !isPlayerQuit) {
-
+                    // set reset turn false
                     if (isPlayerResetTurn) isPlayerResetTurn = false;
 
                     Console.Clear();
@@ -210,7 +212,7 @@ namespace ChessGame
         private bool selectDestination()
         {
             inputIsCorrect = false;
-            bool fieldIsChosen;
+            bool fieldIsChosen = false;
             row = ' ';
             column = ' ';
             int rowNumber = -1;
@@ -276,7 +278,25 @@ namespace ChessGame
             }
             else
             {
-                fieldIsChosen = logic.isEmptyOrEnemyField(gameboard, playerTurn,rowNumber, columnNumber);
+                if(logic.isFieldOccupied(gameboard,rowNumber, columnNumber))
+                {
+                    if (logic.isEnemyField(gameboard, playerTurn, rowNumber, columnNumber))
+                    {
+                        fieldIsChosen = true;
+                        destinationFieldX = columnNumber;
+                        destinationFieldY = rowNumber;
+                    }
+                    else
+                    {
+                        Console.WriteLine("The Destination Field is Occupied with your own Figure!");
+                    }
+                }
+                else
+                {
+                    fieldIsChosen = true;
+                    destinationFieldX = columnNumber;
+                    destinationFieldY = rowNumber;
+                }
             }
 
             return fieldIsChosen;
@@ -285,7 +305,7 @@ namespace ChessGame
         private bool selectFigure()
         {
             inputIsCorrect = false;
-            bool fieldIsChosen;
+            bool fieldIsChosen = false;
             row = ' ';
             column = ' ';
             int rowNumber = -1;
@@ -351,7 +371,23 @@ namespace ChessGame
             }
             else
             {
-                fieldIsChosen = logic.isFigureOccupiedAndFigureBelongsThePlayer(gameboard, playerTurn, rowNumber, columnNumber);
+                if(logic.isFieldOccupied(gameboard, rowNumber, columnNumber))
+                {
+                    if(logic.checkWhetherFigureBelongsPlayer(gameboard, playerTurn, rowNumber, columnNumber))
+                    {
+                        fieldIsChosen = true;
+                        selectedFigureX = columnNumber;
+                        selectedFigureY = rowNumber;
+                    }
+                    else
+                    {
+                        Console.WriteLine("This Figure belongs the Enemy!");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("There is no Figure to select!");
+                }
             }
 
             return fieldIsChosen;
