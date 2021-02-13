@@ -12,11 +12,10 @@ namespace ChessGame
         private FigurTyp typ;
         private uint figureId;
 
-        public ChessFigure(char symbol, ColorEnum color, FigurTyp typ, uint figureId)
+        public ChessFigure(char symbol, ColorEnum color, uint figureId)
         {
             this.figurSymbol = symbol;
             this.color = color;
-            this.typ = typ;
             this.figureId = figureId;
         }
 
@@ -28,11 +27,6 @@ namespace ChessGame
         public char getSymbol()
         {
             return this.figurSymbol;
-        }
-
-        public FigurTyp GetTyp()
-        {
-            return this.typ;
         }
 
         public uint getID()

@@ -159,7 +159,7 @@ namespace ChessGame
                     // set reset turn false
                     if (isPlayerResetTurn) isPlayerResetTurn = false;
 
-                    Console.Clear();
+                    Console.WriteLine(playerTurn + "'s turn!");
 
                     gameboard.printBoardWithFigures();
 
@@ -181,8 +181,19 @@ namespace ChessGame
                     }
                 }
 
-                Console.WriteLine("Next player!");
-                setNextPlayer();
+                if(figureIsChosen & destinationFieldIsChosen)
+                {
+                    if (logic.ckeckWhetherMovementIsCorrect(gameboard, selectedFigureX, selectedFigureY, destinationFieldX, destinationFieldY))
+                    {
+                        Console.Clear();
+                        setNextPlayer();
+                    }
+                    else
+                    {
+                        Console.WriteLine("This is not a Correct movement!");
+                    }
+                    
+                }
             }
 
             Console.BackgroundColor = ConsoleColor.Black;
