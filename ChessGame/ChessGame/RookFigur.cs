@@ -7,7 +7,7 @@ namespace ChessGame
 {
     public class RookFigur : ChessFigure
     {
-        public RookFigur(ColorEnum color, uint figureId) : base(ROOKSYMBOL, color, FigurTyp.Rook, figureId)
+        public RookFigur(ColorEnum color, uint figureId) : base(ROOKSYMBOL, color, figureId)
         {
 
         }

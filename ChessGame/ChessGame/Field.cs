@@ -50,14 +50,8 @@ namespace ChessGame
 
         public void placeFigure(ChessFigure figure)
         {
-            if (isFieldOccupied) {
-                Console.WriteLine("Field is Occupied!");
-            }
-            else
-            {
-                figureOnTheField = figure;
-                isFieldOccupied = true;
-            }
+            figureOnTheField = figure;
+            isFieldOccupied = true;
         }
 
         public bool getIsFieldOccupied()
@@ -68,6 +62,13 @@ namespace ChessGame
         public ChessFigure getChessFigure()
         {
             return this.figureOnTheField;
+        }
+
+        public ChessFigure removeFigure()
+        {
+            ChessFigure figureToRemove = this.figureOnTheField;
+            this.Reset();
+            return figureToRemove;
         }
 
         public void Reset()

@@ -66,6 +66,7 @@ namespace ChessGame
 
             if (newGame)
             {
+                Console.Clear();
                 NewGame();
             }
 
@@ -183,17 +184,32 @@ namespace ChessGame
 
                 if(figureIsChosen & destinationFieldIsChosen)
                 {
-                    if (logic.ckeckWhetherMovementIsCorrect(gameboard, selectedFigureX, selectedFigureY, destinationFieldX, destinationFieldY))
+                    if (logic.ckeckWhetherMovementIsCorrect(gameboard, playerTurn, selectedFigureX, selectedFigureY, destinationFieldX, destinationFieldY))
                     {
-                        Console.Clear();
+                        if(logic.isFieldOccupied(gameboard, destinationFieldY, destinationFieldX)){
+                            if(playerTurn == Constants.ColorEnum.WHITE)
+                            {
+                                blackPlayerFiguresOutOfGame.Add(gameboard.getBoard()[destinationFieldY, destinationFieldX].removeFigure());
+                            }
+                            else
+                            {
+                                whitePlayerFiguresOutOfGame.Add(gameboard.getBoard()[destinationFieldY, destinationFieldX].removeFigure());
+                            }
+                        }
+
+                        gameboard.moveFigureToPosition(selectedFigureX, selectedFigureY, destinationFieldX, destinationFieldY);
                         setNextPlayer();
+
+                        Console.Clear();
                     }
                     else
                     {
                         Console.WriteLine("This is not a Correct movement!");
                     }
-                    
                 }
+
+                figureIsChosen = false;
+                destinationFieldIsChosen = false;
             }
 
             Console.BackgroundColor = ConsoleColor.Black;
@@ -206,8 +222,16 @@ namespace ChessGame
 
         private void setNextPlayer()
         {
-            figureIsChosen = false;
-            destinationFieldIsChosen = false;
+            if(playerTurn == Constants.ColorEnum.WHITE)
+            {
+                playerTurn = Constants.ColorEnum.BLACK;
+            }
+            else
+            {
+                playerTurn = Constants.ColorEnum.WHITE;
+            }
+
+            turnNumber++;
         }
 
         private void printTextSelectDestinationField()

@@ -172,5 +172,10 @@ namespace ChessGame
 
             Console.WriteLine(headerLine);
         }
+
+        public void moveFigureToPosition(int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
+        {
+            Gameboard[destinationFieldY, destinationFieldX].placeFigure(Gameboard[selectedFigureY, selectedFigureX].removeFigure()); 
+        }
     }
 }

@@ -9,7 +9,6 @@ namespace ChessGame
     {
         private char figurSymbol;
         private ColorEnum color;
-        private FigurTyp typ;
         private uint figureId;
 
         public ChessFigure(char symbol, ColorEnum color, uint figureId)

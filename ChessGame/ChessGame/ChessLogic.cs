@@ -38,7 +38,7 @@ namespace ChessGame
             return fieldIsOccupiedWithEnemyFigure;
         }
 
-        public bool ckeckWhetherMovementIsCorrect(ChessGameboard gameboard, int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
+        public bool ckeckWhetherMovementIsCorrect(ChessGameboard gameboard, Constants.ColorEnum playerTurn, int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
         {
             bool movementIsCorrect = false;
 
@@ -48,40 +48,22 @@ namespace ChessGame
                 switch (gameboard.getBoard()[selectedFigureY, selectedFigureX].getChessFigure())
                 {
                     case PawnFigur p:
-                        if(checkMovementForPawnFigure(gameboard, selectedFigureX, selectedFigureY, destinationFieldX, destinationFieldY))
-                        {
-
-                        }
+                        movementIsCorrect = checkMovementForPawnFigure(gameboard, playerTurn, selectedFigureX, selectedFigureY, destinationFieldX, destinationFieldY);
                         break;
                     case RookFigur r:
-                        if(checkMovementForRookFigure(gameboard, selectedFigureX, selectedFigureY, destinationFieldX, destinationFieldY))
-                        {
-
-                        }
+                        movementIsCorrect = checkMovementForRookFigure(gameboard, playerTurn, selectedFigureX, selectedFigureY, destinationFieldX, destinationFieldY);
                         break;
                     case KnightFigur n:
-                        if(checkMovementForKnightFigure(gameboard, selectedFigureX, selectedFigureY, destinationFieldX, destinationFieldY))
-                        {
-
-                        }
+                        movementIsCorrect = checkMovementForKnightFigure(gameboard, playerTurn, selectedFigureX, selectedFigureY, destinationFieldX, destinationFieldY);
                         break;
                     case BishopFigur b:
-                        if(checkMovementForBishopFigure(gameboard, selectedFigureX, selectedFigureY, destinationFieldX, destinationFieldY))
-                        {
-
-                        }
+                        movementIsCorrect = checkMovementForBishopFigure(gameboard, playerTurn, selectedFigureX, selectedFigureY, destinationFieldX, destinationFieldY);
                         break;
                     case QueenFigur q:
-                        if(checkMovementForQueenFigure(gameboard, selectedFigureX, selectedFigureY, destinationFieldX, destinationFieldY))
-                        {
-
-                        }
+                        movementIsCorrect = checkMovementForQueenFigure(gameboard, playerTurn, selectedFigureX, selectedFigureY, destinationFieldX, destinationFieldY);
                         break;
                     case KingFigur k:
-                        if(checkMovementForKingFigure(gameboard, selectedFigureX, selectedFigureY, destinationFieldX, destinationFieldY))
-                        {
-
-                        }
+                        movementIsCorrect = checkMovementForKingFigure(gameboard, playerTurn, selectedFigureX, selectedFigureY, destinationFieldX, destinationFieldY);
                         break;
                 }
             }
@@ -89,32 +71,32 @@ namespace ChessGame
             return movementIsCorrect;
         }
 
-        private bool checkMovementForKingFigure(ChessGameboard gameboard, int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
+        private bool checkMovementForKingFigure(ChessGameboard gameboard, Constants.ColorEnum playerTurn, int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
         {
-            throw new NotImplementedException();
+            return false;
         }
 
-        private bool checkMovementForQueenFigure(ChessGameboard gameboard, int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
+        private bool checkMovementForQueenFigure(ChessGameboard gameboard, Constants.ColorEnum playerTurn, int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
         {
-            throw new NotImplementedException();
+            return false;
         }
 
-        private bool checkMovementForBishopFigure(ChessGameboard gameboard, int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
+        private bool checkMovementForBishopFigure(ChessGameboard gameboard, Constants.ColorEnum playerTurn, int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
         {
-            throw new NotImplementedException();
+            return false;
         }
 
-        private bool checkMovementForKnightFigure(ChessGameboard gameboard, int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
+        private bool checkMovementForKnightFigure(ChessGameboard gameboard, Constants.ColorEnum playerTurn, int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
         {
-            throw new NotImplementedException();
+            return false;
         }
 
-        private bool checkMovementForRookFigure(ChessGameboard gameboard, int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
+        private bool checkMovementForRookFigure(ChessGameboard gameboard, Constants.ColorEnum playerTurn, int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
         {
-            throw new NotImplementedException();
+            return false;
         }
 
-        private bool checkMovementForPawnFigure(ChessGameboard gameboard, int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
+        private bool checkMovementForPawnFigure(ChessGameboard gameboard, Constants.ColorEnum playerTurn, int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
         {
             bool movementIsCorrect = false;
 
@@ -133,7 +115,7 @@ namespace ChessGame
                 {
                     if(movementX == -1 | movementX == 1)
                     {
-                         
+                        if(isEnemyField(gameboard, playerTurn, destinationFieldY, destinationFieldX)) movementIsCorrect = true;
                     }
                 }
             }

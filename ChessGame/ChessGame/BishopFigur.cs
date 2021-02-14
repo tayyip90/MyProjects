@@ -7,6 +7,6 @@ namespace ChessGame
 {
     public class BishopFigur : ChessFigure
     {
-        public BishopFigur(ColorEnum color, uint figureId) : base(BISHOPSYMBOL, color, FigurTyp.Bishop, figureId) { }
+        public BishopFigur(ColorEnum color, uint figureId) : base(BISHOPSYMBOL, color, figureId) { }
     }
 }

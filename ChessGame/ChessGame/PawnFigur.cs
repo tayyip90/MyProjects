@@ -7,7 +7,7 @@ namespace ChessGame
 {
     public class PawnFigur : ChessFigure
     {
-        public PawnFigur(ColorEnum color, uint figureId) : base(PAWNSYMBOL, color, FigurTyp.Pawn, figureId)
+        public PawnFigur(ColorEnum color, uint figureId) : base(PAWNSYMBOL, color, figureId)
         {
 
         }
