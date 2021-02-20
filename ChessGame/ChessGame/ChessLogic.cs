@@ -6,6 +6,26 @@ namespace ChessGame
 {
     public class ChessLogic
     {
+        private List<uint> pawnsfirstMoveOver;
+
+        public ChessLogic()
+        {
+            pawnsfirstMoveOver = new List<uint>();
+            resetPawnsFirstMoveOverList();
+        }
+
+        public void resetPawnsFirstMoveOverList()
+        {
+            pawnsfirstMoveOver.Clear();
+        }
+
+        public void addPawnFirstMoveOver(uint figureId)
+        {
+            if (!pawnsfirstMoveOver.Contains(figureId)){
+                pawnsfirstMoveOver.Add(figureId);
+            }
+        }
+
         public bool isFieldOccupied(ChessGameboard gameboard, int rowNumber, int columnNumber)
         {
             return gameboard.getBoard()[rowNumber, columnNumber].getIsFieldOccupied();
@@ -73,43 +93,97 @@ namespace ChessGame
 
         private bool checkMovementForKingFigure(ChessGameboard gameboard, Constants.ColorEnum playerTurn, int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
         {
-            return false;
-        }
-
-        private bool checkMovementForQueenFigure(ChessGameboard gameboard, Constants.ColorEnum playerTurn, int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
-        {
-            return false;
-        }
-
-        private bool checkMovementForBishopFigure(ChessGameboard gameboard, Constants.ColorEnum playerTurn, int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
-        {
-            return false;
-        }
-
-        private bool checkMovementForKnightFigure(ChessGameboard gameboard, Constants.ColorEnum playerTurn, int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
-        {
-            return false;
-        }
-
-        private bool checkMovementForRookFigure(ChessGameboard gameboard, Constants.ColorEnum playerTurn, int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
-        {
-            return false;
-        }
-
-        private bool checkMovementForPawnFigure(ChessGameboard gameboard, Constants.ColorEnum playerTurn, int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
-        {
             bool movementIsCorrect = false;
-
             int movementX, movementY;
 
             movementX = destinationFieldX - selectedFigureX;
             movementY = destinationFieldY - selectedFigureY;
 
+            return movementIsCorrect;
+        }
+
+        private bool checkMovementForQueenFigure(ChessGameboard gameboard, Constants.ColorEnum playerTurn, int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
+        {
+            bool movementIsCorrect = false;
+            int movementX, movementY;
+
+            movementX = destinationFieldX - selectedFigureX;
+            movementY = destinationFieldY - selectedFigureY;
+
+            return movementIsCorrect;
+        }
+
+        private bool checkMovementForBishopFigure(ChessGameboard gameboard, Constants.ColorEnum playerTurn, int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
+        {
+            bool movementIsCorrect = false;
+            int movementX, movementY;
+
+            movementX = destinationFieldX - selectedFigureX;
+            movementY = destinationFieldY - selectedFigureY;
+
+            return movementIsCorrect;
+        }
+
+        private bool checkMovementForKnightFigure(ChessGameboard gameboard, Constants.ColorEnum playerTurn, int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
+        {
+            bool movementIsCorrect = false;
+            int movementX, movementY;
+
+            movementX = destinationFieldX - selectedFigureX;
+            movementY = destinationFieldY - selectedFigureY;
+
+            if(movementY == 1 | movementY == -1)
+            {
+                if(movementX == 2 | movementX == -2)
+                {
+                    movementIsCorrect = true;
+                }
+            }
+
+            if(movementY == 2 | movementY == -2)
+            {
+                if(movementX == 1 | movementX == -1)
+                {
+                    movementIsCorrect = true;
+                }
+            }
+                
+
+            return movementIsCorrect;
+        }
+
+        private bool checkMovementForRookFigure(ChessGameboard gameboard, Constants.ColorEnum playerTurn, int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
+        {
+            bool movementIsCorrect = false;
+            int movementX, movementY;
+
+            movementX = destinationFieldX - selectedFigureX;
+            movementY = destinationFieldY - selectedFigureY;
+
+            return movementIsCorrect;
+        }
+
+        private bool checkMovementForPawnFigure(ChessGameboard gameboard, Constants.ColorEnum playerTurn, int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
+        {
+            bool movementIsCorrect = false;
+            int movementX, movementY;
+
+            movementX = destinationFieldX - selectedFigureX;
+            movementY = destinationFieldY - selectedFigureY;
+
+            if (movementY == 2 | movementY == -2)
+            { 
+                if(!pawnsfirstMoveOver.Contains(gameboard.getBoard()[selectedFigureY, selectedFigureX].getChessFigure().getID()) & movementX == 0)
+                {
+                    movementIsCorrect = true;
+                }
+            }
+
             if (movementY == 1 | movementY == -1)
             {
                 if(movementX == 0)
                 {
-                    movementIsCorrect = true;
+                    if (!isEnemyField(gameboard, playerTurn, destinationFieldY, destinationFieldX)) movementIsCorrect = true;
                 }
                 else
                 {
@@ -118,6 +192,11 @@ namespace ChessGame
                         if(isEnemyField(gameboard, playerTurn, destinationFieldY, destinationFieldX)) movementIsCorrect = true;
                     }
                 }
+            }
+
+            if (movementIsCorrect)
+            {
+                addPawnFirstMoveOver(gameboard.getBoard()[selectedFigureY, selectedFigureX].getChessFigure().getID());
             }
 
             return movementIsCorrect;

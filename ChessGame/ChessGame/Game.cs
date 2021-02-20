@@ -323,6 +323,7 @@ namespace ChessGame
                     }
                     else
                     {
+                        figureIsChosen = false;
                         Console.WriteLine("The Destination Field is Occupied with your own Figure!");
                     }
                 }
@@ -450,6 +451,8 @@ namespace ChessGame
 
             createWhitePlayerFigures();
             createBlackPlayerFigures();
+
+            logic.resetPawnsFirstMoveOverList();
         }
 
         private void createBlackPlayerFigures()
