@@ -154,6 +154,8 @@ namespace ChessGame
 
             resetGame();
 
+            logic.refreshPossibleMovementsDictionary(gameboard.getBoard());
+
             while (!isGameFinished & !isPlayerQuit)
             {
                 while (!figureIsChosen & !destinationFieldIsChosen & !isPlayerQuit) {
@@ -452,7 +454,7 @@ namespace ChessGame
             createWhitePlayerFigures();
             createBlackPlayerFigures();
 
-            logic.resetPawnsFirstMoveOverList();
+            logic.resetFirstMoveOverList();
         }
 
         private void createBlackPlayerFigures()

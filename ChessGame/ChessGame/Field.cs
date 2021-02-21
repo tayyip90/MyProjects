@@ -6,15 +6,17 @@ namespace ChessGame
 {
    public class Field
    {
+        private uint fieldID;
         private bool isFieldOccupied;
         private ChessFigure figureOnTheField;
         private Constants.Row row;
         private Constants.Column column; 
         private Constants.ColorEnum color;
 
-        public Field(Constants.Row row, Constants.Column column, Constants.ColorEnum color)
+        public Field(uint id, Constants.Row row, Constants.Column column, Constants.ColorEnum color)
         {
             Reset();
+            fieldID = id;
             this.row = row;
             this.column = column;
             this.color = color;
@@ -23,6 +25,11 @@ namespace ChessGame
         public override string ToString()
         {
             return string.Format("| {0,5}, {1,1} C: {2,5} |", row, column, color); 
+        }
+
+        public uint getFieldID()
+        {
+            return fieldID;
         }
 
         /// <summary>

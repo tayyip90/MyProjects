@@ -33,6 +33,8 @@ namespace ChessGame
         private Field[,] Gameboard;
 
         public ChessGameboard(){
+            uint id = 1;
+
             Gameboard = new Field[Constants.GAMEBOARDHEIGHT,Constants.GAMEBOARDWIDTH];
 
             Constants.Row rowEnum = Constants.Row.Eight;
@@ -52,7 +54,8 @@ namespace ChessGame
 
                 for (int column = 0; column  < Constants.GAMEBOARDWIDTH; column++)
                 {
-                    Gameboard[row, column] = new Field(rowEnum, columnEnum, color);
+                    Gameboard[row, column] = new Field(id, rowEnum, columnEnum, color);
+                    id++;
 
                     columnEnum++;
                     if (color == Constants.ColorEnum.BLACK)

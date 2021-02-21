@@ -6,23 +6,38 @@ namespace ChessGame
 {
     public class ChessLogic
     {
-        private List<uint> pawnsfirstMoveOver;
+        private List<uint> firstMoveOver;
+        Dictionary<uint, List<uint>> possibleMovements;
 
         public ChessLogic()
         {
-            pawnsfirstMoveOver = new List<uint>();
-            resetPawnsFirstMoveOverList();
+            firstMoveOver = new List<uint>();
+            possibleMovements = new Dictionary<uint, List<uint>>();
+            resetFirstMoveOverList();
         }
 
-        public void resetPawnsFirstMoveOverList()
+        public void resetFirstMoveOverList()
         {
-            pawnsfirstMoveOver.Clear();
+            firstMoveOver.Clear();
         }
 
-        public void addPawnFirstMoveOver(uint figureId)
+        public void resetPossibleMovementsDictionary()
         {
-            if (!pawnsfirstMoveOver.Contains(figureId)){
-                pawnsfirstMoveOver.Add(figureId);
+            possibleMovements.Clear();
+        }
+
+        public void addFigureIdToFirstMoveOverList(uint figureId)
+        {
+            if (!firstMoveOver.Contains(figureId)){
+                firstMoveOver.Add(figureId);
+            }
+        }
+
+        public void addToPossibleMovementsDictionary(uint figureId, uint fieldId)
+        {
+            if (!possibleMovements[figureId].Contains(fieldId))
+            {
+                possibleMovements[figureId].Add(figureId);
             }
         }
 
@@ -102,6 +117,43 @@ namespace ChessGame
             return movementIsCorrect;
         }
 
+        public void refreshPossibleMovementsDictionary(Field[,] gameboard)
+        {
+            for(uint i = 0; i < 8; i++)
+            {
+                for(uint j = 0; j < 8; j++)
+                {
+                    if(gameboard[i, j].getIsFieldOccupied())
+                    {
+                        bool isFirstMovmentOver = firstMoveOver.Contains(gameboard[i, j].getChessFigure().getID());
+                        Constants.ColorEnum color = gameboard[i, j].getChessFigure().getColor();
+
+                        switch (gameboard[i, j].getChessFigure())
+                        {
+                            case PawnFigur p:
+                                    
+                                break;
+                            case RookFigur r:
+                                
+                                break;
+                            case KnightFigur n:
+                                
+                                break;
+                            case BishopFigur b:
+                               
+                                break;
+                            case QueenFigur q:
+                                
+                                break;
+                            case KingFigur k:
+                                
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+
         private bool checkMovementForQueenFigure(ChessGameboard gameboard, Constants.ColorEnum playerTurn, int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
         {
             bool movementIsCorrect = false;
@@ -173,7 +225,7 @@ namespace ChessGame
 
             if (movementY == 2 | movementY == -2)
             { 
-                if(!pawnsfirstMoveOver.Contains(gameboard.getBoard()[selectedFigureY, selectedFigureX].getChessFigure().getID()) & movementX == 0)
+                if(!firstMoveOver.Contains(gameboard.getBoard()[selectedFigureY, selectedFigureX].getChessFigure().getID()) & movementX == 0)
                 {
                     movementIsCorrect = true;
                 }
@@ -196,7 +248,7 @@ namespace ChessGame
 
             if (movementIsCorrect)
             {
-                addPawnFirstMoveOver(gameboard.getBoard()[selectedFigureY, selectedFigureX].getChessFigure().getID());
+                addFigureIdToFirstMoveOverList(gameboard.getBoard()[selectedFigureY, selectedFigureX].getChessFigure().getID());
             }
 
             return movementIsCorrect;
