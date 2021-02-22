@@ -33,17 +33,25 @@ namespace ChessGame
             }
         }
 
-        public void addToPossibleMovementsDictionary(uint figureId, uint fieldId)
+        public void addFigureIdToPossibleMovementsDictionary(uint figureId)
         {
-            if (!possibleMovements[figureId].Contains(fieldId))
+            if (!possibleMovements.ContainsKey(figureId))
             {
-                possibleMovements[figureId].Add(figureId);
+                possibleMovements.Add(figureId, new List<uint>());
             }
         }
 
-        public bool isFieldOccupied(ChessGameboard gameboard, int rowNumber, int columnNumber)
+        public void addFieldIdToPossibleMovementsDictionary(uint figureId, uint fieldId)
         {
-            return gameboard.getBoard()[rowNumber, columnNumber].getIsFieldOccupied();
+            if (!possibleMovements[figureId].Contains(fieldId))
+            {
+                possibleMovements[figureId].Add(fieldId);
+            }
+        }
+
+        public bool isFieldOccupied(Field[,] gameboard, int rowNumber, int columnNumber)
+        {
+            return gameboard[rowNumber, columnNumber].getIsFieldOccupied();
         }
 
         public bool checkWhetherFigureBelongsPlayer(ChessGameboard gameboard, Constants.ColorEnum playerTurn, int rowNumber, int columnNumber)
@@ -58,13 +66,13 @@ namespace ChessGame
             return sameColor;
         }
 
-        public bool isEnemyField(ChessGameboard gameboard, Constants.ColorEnum playerTurn, int rowNumber, int columnNumber)
+        public bool isEnemyField(Field[,] gameboard, Constants.ColorEnum playerTurn, int rowNumber, int columnNumber)
         {
             bool fieldIsOccupiedWithEnemyFigure = false;
 
-            if (gameboard.getBoard()[rowNumber, columnNumber].getIsFieldOccupied())
+            if (gameboard[rowNumber, columnNumber].getIsFieldOccupied())
             {
-                if (gameboard.getBoard()[rowNumber, columnNumber].getChessFigure().getColor() != playerTurn)
+                if (gameboard[rowNumber, columnNumber].getChessFigure().getColor() != playerTurn)
                 {
                     fieldIsOccupiedWithEnemyFigure = true;
                 }
@@ -119,19 +127,84 @@ namespace ChessGame
 
         public void refreshPossibleMovementsDictionary(Field[,] gameboard)
         {
-            for(uint i = 0; i < 8; i++)
+            foreach (List<uint> fieldIds in possibleMovements.Values)
             {
-                for(uint j = 0; j < 8; j++)
+                fieldIds.Clear();
+            }
+
+            for(int i = 0; i < 8; i++)
+            {
+                for(int j = 0; j < 8; j++)
                 {
                     if(gameboard[i, j].getIsFieldOccupied())
                     {
                         bool isFirstMovmentOver = firstMoveOver.Contains(gameboard[i, j].getChessFigure().getID());
                         Constants.ColorEnum color = gameboard[i, j].getChessFigure().getColor();
+                        uint figureId = gameboard[i, j].getChessFigure().getID();
 
                         switch (gameboard[i, j].getChessFigure())
                         {
                             case PawnFigur p:
-                                    
+                                bool enemyField;
+
+                                if (!isFirstMovmentOver)
+                                {
+                                    if (color == Constants.ColorEnum.BLACK)
+                                    {
+                                        enemyField = isEnemyField(gameboard, color, i + 2, j);
+
+                                        if (!enemyField)
+                                        {
+                                            addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + 2, j].getFieldID());
+                                        }
+                                    }
+                                    else
+                                    {
+                                        enemyField = isEnemyField(gameboard, color, i - 2, j);
+
+                                        if (!enemyField)
+                                        {
+                                            addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i - 2, j].getFieldID());
+                                        }
+                                    }
+                                }
+
+                                if(i-1 > Constants.GAMEBOARDHEIGHT)
+                                {
+                                    if(!isFieldOccupied(gameboard, i - 1, j))
+                                    {
+                                        addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i - 1, j].getFieldID());
+                                    }
+
+                                    if(isEnemyField(gameboard, color, i - 1, j - 1))
+                                    {
+                                        addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i - 1, j - 1].getFieldID());
+                                    }
+
+                                    if (isEnemyField(gameboard, color, i - 1, j + 1))
+                                    {
+                                        addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i - 1, j + 1].getFieldID());
+                                    }
+                                }
+
+                                if(i+1 < Constants.GAMEBOARDHEIGHT)
+                                {
+                                    if (!isFieldOccupied(gameboard, i + 1, j))
+                                    {
+                                        addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + 1, j].getFieldID());
+                                    }
+
+                                    if (isEnemyField(gameboard, color, i + 1, j - 1))
+                                    {
+                                        addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + 1, j - 1].getFieldID());
+                                    }
+
+                                    if (isEnemyField(gameboard, color, i + 1, j + 1))
+                                    {
+                                        addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + 1, j + 1].getFieldID());
+                                    }
+                                }
+
                                 break;
                             case RookFigur r:
                                 
@@ -235,13 +308,13 @@ namespace ChessGame
             {
                 if(movementX == 0)
                 {
-                    if (!isEnemyField(gameboard, playerTurn, destinationFieldY, destinationFieldX)) movementIsCorrect = true;
+                    if (!isEnemyField(gameboard.getBoard(), playerTurn, destinationFieldY, destinationFieldX)) movementIsCorrect = true;
                 }
                 else
                 {
                     if(movementX == -1 | movementX == 1)
                     {
-                        if(isEnemyField(gameboard, playerTurn, destinationFieldY, destinationFieldX)) movementIsCorrect = true;
+                        if(isEnemyField(gameboard.getBoard(), playerTurn, destinationFieldY, destinationFieldX)) movementIsCorrect = true;
                     }
                 }
             }
