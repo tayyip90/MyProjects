@@ -178,7 +178,7 @@ namespace ChessGame
 
         public void moveFigureToPosition(int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
         {
-            Gameboard[destinationFieldY, destinationFieldX].placeFigure(Gameboard[selectedFigureY, selectedFigureX].removeFigure()); 
+            Gameboard[destinationFieldY, destinationFieldX].placeFigure(Gameboard[selectedFigureY, selectedFigureX].removeFigure());
         }
     }
 }

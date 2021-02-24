@@ -154,8 +154,6 @@ namespace ChessGame
 
             resetGame();
 
-            logic.refreshPossibleMovementsDictionary(gameboard.getBoard());
-
             while (!isGameFinished & !isPlayerQuit)
             {
                 while (!figureIsChosen & !destinationFieldIsChosen & !isPlayerQuit) {
@@ -186,7 +184,7 @@ namespace ChessGame
 
                 if(figureIsChosen & destinationFieldIsChosen)
                 {
-                    if (logic.ckeckWhetherMovementIsCorrect(gameboard, playerTurn, selectedFigureX, selectedFigureY, destinationFieldX, destinationFieldY))
+                    if (logic.ckeckWhetherMovementIsCorrect(gameboard.getBoard(), selectedFigureX, selectedFigureY, destinationFieldX, destinationFieldY))
                     {
                         if(logic.isFieldOccupied(gameboard.getBoard(), destinationFieldY, destinationFieldX)){
                             if(playerTurn == Constants.ColorEnum.WHITE)
@@ -199,8 +197,10 @@ namespace ChessGame
                             }
                         }
 
+                        logic.addFigureIdToFirstMoveOverList(gameboard.getBoard(), selectedFigureY, selectedFigureX);
                         gameboard.moveFigureToPosition(selectedFigureX, selectedFigureY, destinationFieldX, destinationFieldY);
                         setNextPlayer();
+                        logic.refreshPossibleMovementsDictionary(gameboard.getBoard());
 
                         Console.Clear();
                     }
@@ -411,7 +411,7 @@ namespace ChessGame
             {
                 if(logic.isFieldOccupied(gameboard.getBoard(), rowNumber, columnNumber))
                 {
-                    if(logic.checkWhetherFigureBelongsPlayer(gameboard, playerTurn, rowNumber, columnNumber))
+                    if(logic.checkWhetherFigureBelongsPlayer(gameboard.getBoard(), playerTurn, rowNumber, columnNumber))
                     {
                         fieldIsChosen = true;
                         selectedFigureX = columnNumber;
@@ -455,6 +455,7 @@ namespace ChessGame
             createBlackPlayerFigures();
 
             logic.resetFirstMoveOverList();
+            logic.refreshPossibleMovementsDictionary(gameboard.getBoard());
         }
 
         private void createBlackPlayerFigures()

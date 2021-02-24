@@ -26,10 +26,10 @@ namespace ChessGame
             possibleMovements.Clear();
         }
 
-        public void addFigureIdToFirstMoveOverList(uint figureId)
+        public void addFigureIdToFirstMoveOverList(Field[,] gameboard, int selectedFigureY, int selectedFigureX)
         {
-            if (!firstMoveOver.Contains(figureId)){
-                firstMoveOver.Add(figureId);
+            if (!firstMoveOver.Contains(gameboard[selectedFigureY, selectedFigureX].getChessFigure().getID())) {
+                firstMoveOver.Add(gameboard[selectedFigureY, selectedFigureX].getChessFigure().getID());
             }
         }
 
@@ -54,11 +54,11 @@ namespace ChessGame
             return gameboard[rowNumber, columnNumber].getIsFieldOccupied();
         }
 
-        public bool checkWhetherFigureBelongsPlayer(ChessGameboard gameboard, Constants.ColorEnum playerTurn, int rowNumber, int columnNumber)
+        public bool checkWhetherFigureBelongsPlayer(Field[,] gameboard, Constants.ColorEnum playerTurn, int rowNumber, int columnNumber)
         {
             bool sameColor = false;
 
-            if (gameboard.getBoard()[rowNumber, columnNumber].getChessFigure().getColor() == playerTurn)
+            if (gameboard[rowNumber, columnNumber].getChessFigure().getColor() == playerTurn)
             {
                 sameColor = true;
             }
@@ -68,61 +68,22 @@ namespace ChessGame
 
         public bool isEnemyField(Field[,] gameboard, Constants.ColorEnum playerTurn, int rowNumber, int columnNumber)
         {
-            bool fieldIsOccupiedWithEnemyFigure = false;
+            bool enemyField = false;
 
-            if (gameboard[rowNumber, columnNumber].getIsFieldOccupied())
+            if(isFieldOccupied(gameboard, rowNumber, columnNumber))
             {
-                if (gameboard[rowNumber, columnNumber].getChessFigure().getColor() != playerTurn)
-                {
-                    fieldIsOccupiedWithEnemyFigure = true;
-                }
+                enemyField = !checkWhetherFigureBelongsPlayer(gameboard, playerTurn, rowNumber, columnNumber);
             }
 
-            return fieldIsOccupiedWithEnemyFigure;
+            return enemyField;
         }
 
-        public bool ckeckWhetherMovementIsCorrect(ChessGameboard gameboard, Constants.ColorEnum playerTurn, int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
+        public bool ckeckWhetherMovementIsCorrect(Field[,] gameboard, int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
         {
-            bool movementIsCorrect = false;
+            uint figureId = gameboard[selectedFigureY, selectedFigureX].getChessFigure().getID();
+            uint fieldId = gameboard[destinationFieldY, destinationFieldX].getFieldID();
 
-            //  if there is a movement then...
-            if (selectedFigureX != destinationFieldX | selectedFigureY != destinationFieldY)
-            {
-                switch (gameboard.getBoard()[selectedFigureY, selectedFigureX].getChessFigure())
-                {
-                    case PawnFigur p:
-                        movementIsCorrect = checkMovementForPawnFigure(gameboard, playerTurn, selectedFigureX, selectedFigureY, destinationFieldX, destinationFieldY);
-                        break;
-                    case RookFigur r:
-                        movementIsCorrect = checkMovementForRookFigure(gameboard, playerTurn, selectedFigureX, selectedFigureY, destinationFieldX, destinationFieldY);
-                        break;
-                    case KnightFigur n:
-                        movementIsCorrect = checkMovementForKnightFigure(gameboard, playerTurn, selectedFigureX, selectedFigureY, destinationFieldX, destinationFieldY);
-                        break;
-                    case BishopFigur b:
-                        movementIsCorrect = checkMovementForBishopFigure(gameboard, playerTurn, selectedFigureX, selectedFigureY, destinationFieldX, destinationFieldY);
-                        break;
-                    case QueenFigur q:
-                        movementIsCorrect = checkMovementForQueenFigure(gameboard, playerTurn, selectedFigureX, selectedFigureY, destinationFieldX, destinationFieldY);
-                        break;
-                    case KingFigur k:
-                        movementIsCorrect = checkMovementForKingFigure(gameboard, playerTurn, selectedFigureX, selectedFigureY, destinationFieldX, destinationFieldY);
-                        break;
-                }
-            }
-
-            return movementIsCorrect;
-        }
-
-        private bool checkMovementForKingFigure(ChessGameboard gameboard, Constants.ColorEnum playerTurn, int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
-        {
-            bool movementIsCorrect = false;
-            int movementX, movementY;
-
-            movementX = destinationFieldX - selectedFigureX;
-            movementY = destinationFieldY - selectedFigureY;
-
-            return movementIsCorrect;
+            return possibleMovements[figureId].Contains(fieldId);
         }
 
         public void refreshPossibleMovementsDictionary(Field[,] gameboard)
@@ -132,9 +93,9 @@ namespace ChessGame
                 fieldIds.Clear();
             }
 
-            for(int i = 0; i < 8; i++)
+            for(int i = 0; i < Constants.GAMEBOARDHEIGHT; i++)
             {
-                for(int j = 0; j < 8; j++)
+                for(int j = 0; j < Constants.GAMEBOARDWIDTH; j++)
                 {
                     if(gameboard[i, j].getIsFieldOccupied())
                     {
@@ -169,21 +130,27 @@ namespace ChessGame
                                     }
                                 }
 
-                                if(i-1 > Constants.GAMEBOARDHEIGHT)
+                                if(i-1 >= 0)
                                 {
                                     if(!isFieldOccupied(gameboard, i - 1, j))
                                     {
                                         addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i - 1, j].getFieldID());
                                     }
 
-                                    if(isEnemyField(gameboard, color, i - 1, j - 1))
+                                    if (j - 1 >= 0)
                                     {
-                                        addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i - 1, j - 1].getFieldID());
+                                        if (isEnemyField(gameboard, color, i - 1, j - 1))
+                                        {
+                                            addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i - 1, j - 1].getFieldID());
+                                        }
                                     }
 
-                                    if (isEnemyField(gameboard, color, i - 1, j + 1))
+                                    if (j + 1 < Constants.GAMEBOARDWIDTH)
                                     {
-                                        addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i - 1, j + 1].getFieldID());
+                                        if (isEnemyField(gameboard, color, i - 1, j + 1))
+                                        {
+                                            addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i - 1, j + 1].getFieldID());
+                                        }
                                     }
                                 }
 
@@ -194,20 +161,115 @@ namespace ChessGame
                                         addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + 1, j].getFieldID());
                                     }
 
-                                    if (isEnemyField(gameboard, color, i + 1, j - 1))
+                                    if (j - 1 >= 0)
                                     {
-                                        addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + 1, j - 1].getFieldID());
+                                        if (isEnemyField(gameboard, color, i + 1, j - 1))
+                                        {
+                                            addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + 1, j - 1].getFieldID());
+                                        }
                                     }
 
-                                    if (isEnemyField(gameboard, color, i + 1, j + 1))
+                                    if (j + 1 < Constants.GAMEBOARDWIDTH)
                                     {
-                                        addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + 1, j + 1].getFieldID());
+                                        if (isEnemyField(gameboard, color, i + 1, j + 1))
+                                        {
+                                            addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + 1, j + 1].getFieldID());
+                                        }
                                     }
                                 }
 
                                 break;
+
                             case RookFigur r:
-                                
+
+                                bool foundFieldWithFigure = false;
+
+                                for(int k = 1; i + k < Constants.GAMEBOARDHEIGHT; k++)
+                                {
+                                    if (!foundFieldWithFigure)
+                                    {
+                                        if(isFieldOccupied(gameboard, i+k, j))
+                                        {
+                                            if(isEnemyField(gameboard, color, i+k, j))
+                                            {
+                                                addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + k, j].getFieldID());
+                                            }
+
+                                            foundFieldWithFigure = true;
+                                        }
+                                        else
+                                        {
+                                            addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + k, j].getFieldID());
+                                        }
+                                    }
+                                }
+
+                                foundFieldWithFigure = false;
+
+                                for (int k = -1; i + k >= 0; k--)
+                                {
+                                    if (!foundFieldWithFigure)
+                                    {
+                                        if (isFieldOccupied(gameboard, i + k, j))
+                                        {
+                                            if (isEnemyField(gameboard, color, i + k, j))
+                                            {
+                                                addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + k, j].getFieldID());
+                                            }
+
+                                            foundFieldWithFigure = true;
+                                        }
+                                        else
+                                        {
+                                            addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + k, j].getFieldID());
+                                        }
+                                    }
+                                }
+
+                                foundFieldWithFigure = false;
+
+                                for (int k = 1; k + j < Constants.GAMEBOARDWIDTH; k++)
+                                {
+                                    if (!foundFieldWithFigure)
+                                    {
+                                        if (isFieldOccupied(gameboard, i, j + k))
+                                        {
+                                            if (isEnemyField(gameboard, color, i, j + k))
+                                            {
+                                                addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i, j + k].getFieldID());
+                                            }
+
+                                            foundFieldWithFigure = true;
+                                        }
+                                        else
+                                        {
+                                            addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i, j + k].getFieldID());
+                                        }
+                                    }
+                                }
+
+                                foundFieldWithFigure = false;
+
+                                for (int k = -1; j + k >= 0; k--)
+                                {
+                                    if (!foundFieldWithFigure)
+                                    {
+                                        if (isFieldOccupied(gameboard, i, j + k))
+                                        {
+                                            if (isEnemyField(gameboard, color, i, j + k))
+                                            {
+                                                addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i, j + k].getFieldID());
+                                            }
+
+                                            foundFieldWithFigure = true;
+                                        }
+                                        else
+                                        {
+                                            addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i, j + k].getFieldID());
+                                        }
+                                    }
+                                }
+
                                 break;
                             case KnightFigur n:
                                 
@@ -225,106 +287,6 @@ namespace ChessGame
                     }
                 }
             }
-        }
-
-        private bool checkMovementForQueenFigure(ChessGameboard gameboard, Constants.ColorEnum playerTurn, int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
-        {
-            bool movementIsCorrect = false;
-            int movementX, movementY;
-
-            movementX = destinationFieldX - selectedFigureX;
-            movementY = destinationFieldY - selectedFigureY;
-
-            return movementIsCorrect;
-        }
-
-        private bool checkMovementForBishopFigure(ChessGameboard gameboard, Constants.ColorEnum playerTurn, int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
-        {
-            bool movementIsCorrect = false;
-            int movementX, movementY;
-
-            movementX = destinationFieldX - selectedFigureX;
-            movementY = destinationFieldY - selectedFigureY;
-
-            return movementIsCorrect;
-        }
-
-        private bool checkMovementForKnightFigure(ChessGameboard gameboard, Constants.ColorEnum playerTurn, int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
-        {
-            bool movementIsCorrect = false;
-            int movementX, movementY;
-
-            movementX = destinationFieldX - selectedFigureX;
-            movementY = destinationFieldY - selectedFigureY;
-
-            if(movementY == 1 | movementY == -1)
-            {
-                if(movementX == 2 | movementX == -2)
-                {
-                    movementIsCorrect = true;
-                }
-            }
-
-            if(movementY == 2 | movementY == -2)
-            {
-                if(movementX == 1 | movementX == -1)
-                {
-                    movementIsCorrect = true;
-                }
-            }
-                
-
-            return movementIsCorrect;
-        }
-
-        private bool checkMovementForRookFigure(ChessGameboard gameboard, Constants.ColorEnum playerTurn, int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
-        {
-            bool movementIsCorrect = false;
-            int movementX, movementY;
-
-            movementX = destinationFieldX - selectedFigureX;
-            movementY = destinationFieldY - selectedFigureY;
-
-            return movementIsCorrect;
-        }
-
-        private bool checkMovementForPawnFigure(ChessGameboard gameboard, Constants.ColorEnum playerTurn, int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
-        {
-            bool movementIsCorrect = false;
-            int movementX, movementY;
-
-            movementX = destinationFieldX - selectedFigureX;
-            movementY = destinationFieldY - selectedFigureY;
-
-            if (movementY == 2 | movementY == -2)
-            { 
-                if(!firstMoveOver.Contains(gameboard.getBoard()[selectedFigureY, selectedFigureX].getChessFigure().getID()) & movementX == 0)
-                {
-                    movementIsCorrect = true;
-                }
-            }
-
-            if (movementY == 1 | movementY == -1)
-            {
-                if(movementX == 0)
-                {
-                    if (!isEnemyField(gameboard.getBoard(), playerTurn, destinationFieldY, destinationFieldX)) movementIsCorrect = true;
-                }
-                else
-                {
-                    if(movementX == -1 | movementX == 1)
-                    {
-                        if(isEnemyField(gameboard.getBoard(), playerTurn, destinationFieldY, destinationFieldX)) movementIsCorrect = true;
-                    }
-                }
-            }
-
-            if (movementIsCorrect)
-            {
-                addFigureIdToFirstMoveOverList(gameboard.getBoard()[selectedFigureY, selectedFigureX].getChessFigure().getID());
-            }
-
-            return movementIsCorrect;
         }
     }
 }
