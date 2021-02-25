@@ -148,16 +148,23 @@ namespace ChessGame
 
             string headerLine = "       ";
 
+            string horizontalBorder = string.Empty;
+
             foreach (Constants.Column columnHeader in Enum.GetValues(typeof(Constants.Column)))
             {
                 headerLine += string.Format("| {0,12} |", columnHeader) + " ";
             }
 
-            headerLine += "      ";
+            headerLine += "        ";
 
-            Console.WriteLine(Constants.PLACEHOLDERSTRINGLINES);
+            for (int i = 0; i < headerLine.Length; i++)
+            {
+                horizontalBorder += "-";
+            }
+
+            Console.WriteLine(horizontalBorder);
             Console.WriteLine(headerLine);
-            Console.WriteLine(Constants.PLACEHOLDERSTRINGLINES);
+            Console.WriteLine(horizontalBorder);
 
             Constants.Row rowHeader = Constants.Row.Eight;
 
@@ -172,12 +179,12 @@ namespace ChessGame
                 }
 
                 Console.WriteLine(string.Format("{0,6}", rowHeader) + " " + line + " " + string.Format("{0,6}", rowHeader));
-                Console.WriteLine(Constants.PLACEHOLDERSTRINGLINES);
+                Console.WriteLine(horizontalBorder);
                 rowHeader--;
             }
 
             Console.WriteLine(headerLine);
-            Console.WriteLine(Constants.PLACEHOLDERSTRINGLINES);
+            Console.WriteLine(horizontalBorder);
         }
 
         public void moveFigureToPosition(int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
