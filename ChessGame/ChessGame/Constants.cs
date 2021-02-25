@@ -30,6 +30,8 @@ namespace ChessGame
         public const char NEWGAME = 'n';
         public const char HELP = 'h';
 
+        public const string PLACEHOLDERSTRINGLINES = "-------------------------------------------------------------------------------------------------------------------------------------------------------";
+
         public const string PLACEHOLDERSTRINGSTARS =  "*******************************************************";
         public const string TITLE =             "* Chess Game                                          *";
 

@@ -155,7 +155,9 @@ namespace ChessGame
 
             headerLine += "      ";
 
+            Console.WriteLine(Constants.PLACEHOLDERSTRINGLINES);
             Console.WriteLine(headerLine);
+            Console.WriteLine(Constants.PLACEHOLDERSTRINGLINES);
 
             Constants.Row rowHeader = Constants.Row.Eight;
 
@@ -170,10 +172,12 @@ namespace ChessGame
                 }
 
                 Console.WriteLine(string.Format("{0,6}", rowHeader) + " " + line + " " + string.Format("{0,6}", rowHeader));
+                Console.WriteLine(Constants.PLACEHOLDERSTRINGLINES);
                 rowHeader--;
             }
 
             Console.WriteLine(headerLine);
+            Console.WriteLine(Constants.PLACEHOLDERSTRINGLINES);
         }
 
         public void moveFigureToPosition(int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)

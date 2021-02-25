@@ -97,7 +97,9 @@ namespace ChessGame
             {
                 for(int j = 0; j < Constants.GAMEBOARDWIDTH; j++)
                 {
-                    if(gameboard[i, j].getIsFieldOccupied())
+                    bool foundFieldWithFigure;
+
+                    if (gameboard[i, j].getIsFieldOccupied())
                     {
                         bool isFirstMovmentOver = firstMoveOver.Contains(gameboard[i, j].getChessFigure().getID());
                         Constants.ColorEnum color = gameboard[i, j].getChessFigure().getColor();
@@ -182,7 +184,7 @@ namespace ChessGame
 
                             case RookFigur r:
 
-                                bool foundFieldWithFigure = false;
+                                foundFieldWithFigure = false;
 
                                 for(int k = 1; i + k < Constants.GAMEBOARDHEIGHT; k++)
                                 {
@@ -271,17 +273,534 @@ namespace ChessGame
                                 }
 
                                 break;
+
                             case KnightFigur n:
                                 
+                                if(i + 2 < Constants.GAMEBOARDHEIGHT)
+                                {
+                                    if(j - 1 >= 0)
+                                    {
+                                        if (isFieldOccupied(gameboard, i + 2, j - 1))
+                                        {
+                                            if (isEnemyField(gameboard, color, i + 2, j - 1))
+                                            {
+                                                addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + 2, j - 1].getFieldID());
+                                            }
+                                        }
+                                        else
+                                        {
+                                            addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + 2, j - 1].getFieldID());
+                                        }
+                                    }
+
+                                    if (j + 1 < Constants.GAMEBOARDWIDTH)
+                                    {
+                                        if (isFieldOccupied(gameboard, i + 2, j + 1))
+                                        {
+                                            if (isEnemyField(gameboard, color, i + 2, j + 1))
+                                            {
+                                                addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + 2, j + 1].getFieldID());
+                                            }
+                                        }
+                                        else
+                                        {
+                                            addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + 2, j + 1].getFieldID());
+                                        }
+                                    }
+                                }
+
+                                if (i + 1 < Constants.GAMEBOARDHEIGHT)
+                                {
+                                    if (j - 2 >= 0)
+                                    {
+                                        if (isFieldOccupied(gameboard, i + 1, j - 2))
+                                        {
+                                            if (isEnemyField(gameboard, color, i + 1, j - 2))
+                                            {
+                                                addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + 1, j - 2].getFieldID());
+                                            }
+                                        }
+                                        else
+                                        {
+                                            addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + 1, j - 2].getFieldID());
+                                        }
+                                    }
+
+                                    if (j + 2 < Constants.GAMEBOARDWIDTH)
+                                    {
+                                        if (isFieldOccupied(gameboard, i + 1, j + 2))
+                                        {
+                                            if (isEnemyField(gameboard, color, i + 1, j + 2))
+                                            {
+                                                addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + 1, j + 2].getFieldID());
+                                            }
+                                        }
+                                        else
+                                        {
+                                            addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + 1, j + 2].getFieldID());
+                                        }
+                                    }
+                                }
+
+                                if (i - 2 >= 0)
+                                {
+                                    if (j - 1 >= 0)
+                                    {
+                                        if (isFieldOccupied(gameboard, i - 2, j - 1))
+                                        {
+                                            if (isEnemyField(gameboard, color, i - 2, j - 1))
+                                            {
+                                                addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i - 2, j - 1].getFieldID());
+                                            }
+                                        }
+                                        else
+                                        {
+                                            addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i - 2, j - 1].getFieldID());
+                                        }
+                                    }
+
+                                    if (j + 1 < Constants.GAMEBOARDWIDTH)
+                                    {
+                                        if (isFieldOccupied(gameboard, i - 2, j + 1))
+                                        {
+                                            if (isEnemyField(gameboard, color, i - 2, j + 1))
+                                            {
+                                                addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i - 2, j + 1].getFieldID());
+                                            }
+                                        }
+                                        else
+                                        {
+                                            addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i - 2, j + 1].getFieldID());
+                                        }
+                                    }
+                                }
+
+                                if (i - 1 >= 0)
+                                {
+                                    if (j - 2 >= 0)
+                                    {
+                                        if (isFieldOccupied(gameboard, i - 1, j - 2))
+                                        {
+                                            if (isEnemyField(gameboard, color, i - 1, j - 2))
+                                            {
+                                                addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i - 1, j - 2].getFieldID());
+                                            }
+                                        }
+                                        else
+                                        {
+                                            addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i - 1, j - 2].getFieldID());
+                                        }
+                                    }
+
+                                    if (j + 2 < Constants.GAMEBOARDWIDTH)
+                                    {
+                                        if (isFieldOccupied(gameboard, i - 1, j + 2))
+                                        {
+                                            if (isEnemyField(gameboard, color, i - 1, j + 2))
+                                            {
+                                                addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i - 1, j + 2].getFieldID());
+                                            }
+                                        }
+                                        else
+                                        {
+                                            addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i - 1, j + 2].getFieldID());
+                                        }
+                                    }
+                                }
+
                                 break;
                             case BishopFigur b:
-                               
+
+                                foundFieldWithFigure = false;
+
+                                for (int k = 1; i + k < Constants.GAMEBOARDHEIGHT & j + k < Constants.GAMEBOARDWIDTH; k++)
+                                {
+                                    if (!foundFieldWithFigure)
+                                    {
+                                        if (isFieldOccupied(gameboard, i + k, j + k))
+                                        {
+                                            if (isEnemyField(gameboard, color, i + k, j + k))
+                                            {
+                                                addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + k, j + k].getFieldID());
+                                            }
+
+                                            foundFieldWithFigure = true;
+                                        }
+                                        else
+                                        {
+                                            addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + k, j + k].getFieldID());
+                                        }
+                                    }
+                                }
+
+                                foundFieldWithFigure = false;
+
+                                for (int k = 1; i + k < Constants.GAMEBOARDHEIGHT & j - k >= 0; k++)
+                                {
+                                    if (!foundFieldWithFigure)
+                                    {
+                                        if (isFieldOccupied(gameboard, i + k, j - k))
+                                        {
+                                            if (isEnemyField(gameboard, color, i + k, j - k))
+                                            {
+                                                addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + k, j - k].getFieldID());
+                                            }
+
+                                            foundFieldWithFigure = true;
+                                        }
+                                        else
+                                        {
+                                            addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + k, j - k].getFieldID());
+                                        }
+                                    }
+                                }
+
+                                foundFieldWithFigure = false;
+
+                                for (int k = 1; i - k >= 0 & j - k >= 0; k++)
+                                {
+                                    if (!foundFieldWithFigure)
+                                    {
+                                        if (isFieldOccupied(gameboard, i - k, j - k))
+                                        {
+                                            if (isEnemyField(gameboard, color, i - k, j - k))
+                                            {
+                                                addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i - k, j - k].getFieldID());
+                                            }
+
+                                            foundFieldWithFigure = true;
+                                        }
+                                        else
+                                        {
+                                            addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i - k, j - k].getFieldID());
+                                        }
+                                    }
+                                }
+
+                                foundFieldWithFigure = false;
+
+                                for (int k = 1; i - k >= 0 & j + k < Constants.GAMEBOARDWIDTH; k++)
+                                {
+                                    if (!foundFieldWithFigure)
+                                    {
+                                        if (isFieldOccupied(gameboard, i - k, j + k))
+                                        {
+                                            if (isEnemyField(gameboard, color, i - k, j + k))
+                                            {
+                                                addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i - k, j + k].getFieldID());
+                                            }
+
+                                            foundFieldWithFigure = true;
+                                        }
+                                        else
+                                        {
+                                            addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i - k, j + k].getFieldID());
+                                        }
+                                    }
+                                }
+
                                 break;
                             case QueenFigur q:
-                                
+
+                                foundFieldWithFigure = false;
+
+                                for (int k = 1; i + k < Constants.GAMEBOARDHEIGHT & j + k < Constants.GAMEBOARDWIDTH; k++)
+                                {
+                                    if (!foundFieldWithFigure)
+                                    {
+                                        if (isFieldOccupied(gameboard, i + k, j + k))
+                                        {
+                                            if (isEnemyField(gameboard, color, i + k, j + k))
+                                            {
+                                                addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + k, j + k].getFieldID());
+                                            }
+
+                                            foundFieldWithFigure = true;
+                                        }
+                                        else
+                                        {
+                                            addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + k, j + k].getFieldID());
+                                        }
+                                    }
+                                }
+
+                                foundFieldWithFigure = false;
+
+                                for (int k = 1; i + k < Constants.GAMEBOARDHEIGHT & j - k >= 0; k++)
+                                {
+                                    if (!foundFieldWithFigure)
+                                    {
+                                        if (isFieldOccupied(gameboard, i + k, j - k))
+                                        {
+                                            if (isEnemyField(gameboard, color, i + k, j - k))
+                                            {
+                                                addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + k, j - k].getFieldID());
+                                            }
+
+                                            foundFieldWithFigure = true;
+                                        }
+                                        else
+                                        {
+                                            addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + k, j - k].getFieldID());
+                                        }
+                                    }
+                                }
+
+                                foundFieldWithFigure = false;
+
+                                for (int k = 1; i - k >= 0 & j - k >= 0; k++)
+                                {
+                                    if (!foundFieldWithFigure)
+                                    {
+                                        if (isFieldOccupied(gameboard, i - k, j - k))
+                                        {
+                                            if (isEnemyField(gameboard, color, i - k, j - k))
+                                            {
+                                                addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i - k, j - k].getFieldID());
+                                            }
+
+                                            foundFieldWithFigure = true;
+                                        }
+                                        else
+                                        {
+                                            addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i - k, j - k].getFieldID());
+                                        }
+                                    }
+                                }
+
+                                foundFieldWithFigure = false;
+
+                                for (int k = 1; i - k >= 0 & j + k < Constants.GAMEBOARDWIDTH; k++)
+                                {
+                                    if (!foundFieldWithFigure)
+                                    {
+                                        if (isFieldOccupied(gameboard, i - k, j + k))
+                                        {
+                                            if (isEnemyField(gameboard, color, i - k, j + k))
+                                            {
+                                                addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i - k, j + k].getFieldID());
+                                            }
+
+                                            foundFieldWithFigure = true;
+                                        }
+                                        else
+                                        {
+                                            addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i - k, j + k].getFieldID());
+                                        }
+                                    }
+                                }
+
+                                foundFieldWithFigure = false;
+
+                                for (int k = 1; i + k < Constants.GAMEBOARDHEIGHT; k++)
+                                {
+                                    if (!foundFieldWithFigure)
+                                    {
+                                        if (isFieldOccupied(gameboard, i + k, j))
+                                        {
+                                            if (isEnemyField(gameboard, color, i + k, j))
+                                            {
+                                                addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + k, j].getFieldID());
+                                            }
+
+                                            foundFieldWithFigure = true;
+                                        }
+                                        else
+                                        {
+                                            addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + k, j].getFieldID());
+                                        }
+                                    }
+                                }
+
+                                foundFieldWithFigure = false;
+
+                                for (int k = -1; i + k >= 0; k--)
+                                {
+                                    if (!foundFieldWithFigure)
+                                    {
+                                        if (isFieldOccupied(gameboard, i + k, j))
+                                        {
+                                            if (isEnemyField(gameboard, color, i + k, j))
+                                            {
+                                                addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + k, j].getFieldID());
+                                            }
+
+                                            foundFieldWithFigure = true;
+                                        }
+                                        else
+                                        {
+                                            addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + k, j].getFieldID());
+                                        }
+                                    }
+                                }
+
+                                foundFieldWithFigure = false;
+
+                                for (int k = 1; k + j < Constants.GAMEBOARDWIDTH; k++)
+                                {
+                                    if (!foundFieldWithFigure)
+                                    {
+                                        if (isFieldOccupied(gameboard, i, j + k))
+                                        {
+                                            if (isEnemyField(gameboard, color, i, j + k))
+                                            {
+                                                addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i, j + k].getFieldID());
+                                            }
+
+                                            foundFieldWithFigure = true;
+                                        }
+                                        else
+                                        {
+                                            addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i, j + k].getFieldID());
+                                        }
+                                    }
+                                }
+
+                                foundFieldWithFigure = false;
+
+                                for (int k = -1; j + k >= 0; k--)
+                                {
+                                    if (!foundFieldWithFigure)
+                                    {
+                                        if (isFieldOccupied(gameboard, i, j + k))
+                                        {
+                                            if (isEnemyField(gameboard, color, i, j + k))
+                                            {
+                                                addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i, j + k].getFieldID());
+                                            }
+
+                                            foundFieldWithFigure = true;
+                                        }
+                                        else
+                                        {
+                                            addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i, j + k].getFieldID());
+                                        }
+                                    }
+                                }
+
                                 break;
                             case KingFigur k:
-                                
+
+                                if (i + 1 < Constants.GAMEBOARDHEIGHT)
+                                {
+                                    if (isFieldOccupied(gameboard, i + 1, j))
+                                    {
+                                        if (isEnemyField(gameboard, color, i + 1, j))
+                                        {
+                                            addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + 1, j].getFieldID());
+                                        }
+                                    }
+                                    else
+                                    {
+                                        addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + 1, j].getFieldID());
+                                    }
+
+                                    if (j + 1 < Constants.GAMEBOARDWIDTH)
+                                    {
+                                        if (isFieldOccupied(gameboard, i + 1, j + 1))
+                                        {
+                                            if (isEnemyField(gameboard, color, i + 1, j + 1))
+                                            {
+                                                addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + 1, j + 1].getFieldID());
+                                            }
+                                        }
+                                        else
+                                        {
+                                            addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + 1, j + 1].getFieldID());
+                                        }
+                                    }
+
+                                    if (j - 1 >= 0)
+                                    {
+                                        if (isFieldOccupied(gameboard, i + 1, j - 1))
+                                        {
+                                            if (isEnemyField(gameboard, color, i + 1, j - 1))
+                                            {
+                                                addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + 1, j - 1].getFieldID());
+                                            }
+                                        }
+                                        else
+                                        {
+                                            addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i + 1, j - 1].getFieldID());
+                                        }
+                                    }
+                                }
+
+                                if (j + 1 < Constants.GAMEBOARDWIDTH)
+                                {
+                                    if (isFieldOccupied(gameboard, i, j + 1))
+                                    {
+                                        if (isEnemyField(gameboard, color, i, j + 1))
+                                        {
+                                            addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i, j + 1].getFieldID());
+                                        }
+                                    }
+                                    else
+                                    {
+                                        addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i, j + 1].getFieldID());
+                                    }
+                                }
+
+                                if (j - 1 >= 0)
+                                {
+                                    if (isFieldOccupied(gameboard, i, j - 1))
+                                    {
+                                        if (isEnemyField(gameboard, color, i, j - 1))
+                                        {
+                                            addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i, j - 1].getFieldID());
+                                        }
+                                    }
+                                    else
+                                    {
+                                        addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i, j  - 1].getFieldID());
+                                    }
+                                }
+
+                                if (i - 1 >= 0)
+                                {
+                                    if (isFieldOccupied(gameboard, i - 1, j))
+                                    {
+                                        if (isEnemyField(gameboard, color, i - 1, j))
+                                        {
+                                            addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i - 1, j].getFieldID());
+                                        }
+                                    }
+                                    else
+                                    {
+                                        addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i - 1, j].getFieldID());
+                                    }
+
+                                    if (j + 1 < Constants.GAMEBOARDWIDTH)
+                                    {
+                                        if (isFieldOccupied(gameboard, i - 1, j + 1))
+                                        {
+                                            if (isEnemyField(gameboard, color, i - 1, j + 1))
+                                            {
+                                                addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i - 1, j + 1].getFieldID());
+                                            }
+                                        }
+                                        else
+                                        {
+                                            addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i - 1, j + 1].getFieldID());
+                                        }
+                                    }
+
+                                    if (j - 1 >= 0)
+                                    {
+                                        if (isFieldOccupied(gameboard, i - 1, j - 1))
+                                        {
+                                            if (isEnemyField(gameboard, color, i - 1, j - 1))
+                                            {
+                                                addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i - 1, j - 1].getFieldID());
+                                            }
+                                        }
+                                        else
+                                        {
+                                            addFieldIdToPossibleMovementsDictionary(figureId, gameboard[i - 1, j - 1].getFieldID());
+                                        }
+                                    }
+                                }
+
                                 break;
                         }
                     }
