@@ -807,5 +807,49 @@ namespace ChessGame
                 }
             }
         }
+    
+        public List<string> getPossibleMovmentsOfFigures(List<ChessFigure> allFigures){
+            List<string> possibleMovementsList = new List<string>();
+            string possibleMovementOfFigure;
+
+            foreach(uint key in possibleMovements.Keys)
+            {
+                ChessFigure figure = allFigures.Find(x => x.getID() == key);
+
+                possibleMovementOfFigure = string.Empty;
+                possibleMovementOfFigure += "Figure ID: " + figure.getID() + ", Color: " + figure.getColor();
+
+                switch (figure)
+                {
+                    case PawnFigur p:
+                        possibleMovementOfFigure += " , Figure Typ: Pawn, Possible Fields: ";
+                        break;
+                    case KingFigur k:
+                        possibleMovementOfFigure += " , Figure Typ: King, Possible Fields: ";
+                        break;
+                    case KnightFigur n:
+                        possibleMovementOfFigure += " , Figure Typ: Knight, Possible Fields: ";
+                        break;
+                    case RookFigur r:
+                        possibleMovementOfFigure += " , Figure Typ: Rook, Possible Fields: ";
+                        break;
+                    case QueenFigur q:
+                        possibleMovementOfFigure += " , Figure Typ: Queen, Possible Fields: ";
+                        break;
+                    case BishopFigur b:
+                        possibleMovementOfFigure += " , Figure Typ: Bishop, Possible Fields: ";
+                        break;
+                }
+
+                foreach (uint fieldId in possibleMovements[key])
+                {
+                    possibleMovementOfFigure += " " + fieldId + ",";
+                }
+
+                possibleMovementsList.Add(possibleMovementOfFigure);
+            }
+
+            return possibleMovementsList;
+        }
     }
 }

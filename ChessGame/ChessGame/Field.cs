@@ -44,12 +44,12 @@ namespace ChessGame
             {
                 if(figureOnTheField != null)
                 {
-                    symbol = string.Format("| {0,5}, {1,5} |", figureOnTheField.getSymbol(), figureOnTheField.getColor());
+                    symbol = string.Format("| {0,5}, {1,5}, {2,5} |", figureOnTheField.getID() , figureOnTheField.getSymbol(), figureOnTheField.getColor());
                 }
             }
             else
             {
-                symbol = string.Format("| {0, 12} |", "Empty");
+                symbol = string.Format("| {0,5}, {1, 12} |", fieldID , "Empty");
             }
 
             return symbol;

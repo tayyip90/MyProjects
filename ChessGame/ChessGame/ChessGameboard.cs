@@ -152,7 +152,7 @@ namespace ChessGame
 
             foreach (Constants.Column columnHeader in Enum.GetValues(typeof(Constants.Column)))
             {
-                headerLine += string.Format("| {0,12} |", columnHeader) + " ";
+                headerLine += string.Format("| {0,19} |", columnHeader) + " ";
             }
 
             headerLine += "        ";
