@@ -13,5 +13,15 @@ namespace ChessGame
             this.name = name;
             this.color = color;
         }
+
+        public Constants.ColorEnum getColor()
+        {
+            return this.color;
+        }
+
+        public string getName()
+        {
+            return this.name;
+        }
     }
 }
