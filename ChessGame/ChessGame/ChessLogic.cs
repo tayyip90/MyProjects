@@ -867,9 +867,46 @@ namespace ChessGame
 
         public bool checkWhetherBlackKingIsChecked(Field[,] gameboard)
         {
+            bool isChecked = false;
+
             uint fieldId = findFieldIdOfKingWithColor(gameboard, Constants.ColorEnum.BLACK);
 
-            return false;
+            isChecked = canEnemyMoveOnField(fieldId, Constants.ColorEnum.BLACK);
+
+            return isChecked;
+        }
+
+        private bool canEnemyMoveOnField(uint fieldId, Constants.ColorEnum color)
+        {
+            bool fieldCanBeReached = false;
+
+            switch (color)
+            {
+                case Constants.ColorEnum.BLACK:
+
+                    foreach (List<uint> fieldIds in possibleMovementsWhiteFigures.Values)
+                    {
+                        if (!fieldCanBeReached)
+                        {
+                            fieldCanBeReached = fieldIds.Contains(fieldId);
+                        }
+                    }
+
+                    break;
+                case Constants.ColorEnum.WHITE:
+
+                    foreach (List<uint> fieldIds in possibleMovementsBlackFigures.Values)
+                    {
+                        if (!fieldCanBeReached)
+                        {
+                            fieldCanBeReached = fieldIds.Contains(fieldId);
+                        }
+                    }
+
+                    break;
+            }
+
+            return fieldCanBeReached;
         }
 
         private uint findFieldIdOfKingWithColor(Field[,] gameboard, Constants.ColorEnum color)
@@ -900,9 +937,13 @@ namespace ChessGame
 
         public bool checkWhetherWhiteKingIsChecked(Field[,] gameboard)
         {
+            bool isChecked = false;
+
             uint fieldId = findFieldIdOfKingWithColor(gameboard, Constants.ColorEnum.WHITE);
 
-            return false;
+            isChecked = canEnemyMoveOnField(fieldId, Constants.ColorEnum.WHITE);
+
+            return isChecked;
         }
 
         public List<string> getPossibleMovmentsOfFigures(List<ChessFigure> allFigures){

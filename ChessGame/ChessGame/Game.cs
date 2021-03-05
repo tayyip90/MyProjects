@@ -17,13 +17,15 @@ namespace ChessGame
 
         private List<ChessFigure> allFigures;
 
-        private bool blackKingIsCheck;
-        private bool whiteKingIsCheck;
+        private bool blackKingIsChecked;
+        private bool whiteKingIsChecked;
+
+        private bool blackPlayerWon;
+        private bool whitePlayerWon;
 
         private int turnNumber;
 
         private bool isGameFinished;
-        private bool isPlayerQuit;
         private bool isPlayerResetTurn;
 
         private bool newGame;
@@ -63,12 +65,16 @@ namespace ChessGame
 
         public void start()
         {
-            printIntro();
-
-            if (newGame)
+            while (!quit)
             {
-                Console.Clear();
-                NewGame();
+                printIntro();
+
+                if (newGame)
+                {
+                    Console.Clear();
+                    NewGame();
+                    newGame = false;
+                }
             }
 
             Console.Clear();
@@ -157,20 +163,20 @@ namespace ChessGame
 
             resetGame();
 
-            while (!isGameFinished & !isPlayerQuit)
+            while (!isGameFinished & !quit)
             {
-                while (!figureIsChosen & !destinationFieldIsChosen & !isPlayerQuit) {
+                while (!figureIsChosen & !destinationFieldIsChosen & !quit) {
                     // set reset turn false
                     if (isPlayerResetTurn) isPlayerResetTurn = false;
 
-                    Console.WriteLine("Turn Number: " + turnNumber + " " + players[playerTurn].getName() + "'s turn!");
+                    Console.WriteLine("Turn Number: " + turnNumber + " "+ players[playerTurn].getName() + "'s turn!" + " Color: " + players[playerTurn].getColor());
                     Console.WriteLine(string.Empty);
 
                     gameboard.printBoardWithFigures();
 
                     printTextSelectFigureForPlayer();
 
-                    while (!figureIsChosen & !isPlayerResetTurn & !isPlayerQuit)
+                    while (!figureIsChosen & !isPlayerResetTurn & !quit)
                     {
                         figureIsChosen = selectFigure();
                     }
@@ -179,7 +185,7 @@ namespace ChessGame
 
                     if (figureIsChosen)
                     {
-                        while (!destinationFieldIsChosen & !isPlayerResetTurn & !isPlayerQuit)
+                        while (!destinationFieldIsChosen & !isPlayerResetTurn & !quit)
                         {
                             destinationFieldIsChosen = selectDestination();
                         }
@@ -204,14 +210,35 @@ namespace ChessGame
                         logic.addFigureIdToFirstMoveOverList(gameboard.getBoard(), selectedFigureY, selectedFigureX);
                         gameboard.moveFigureToPosition(selectedFigureX, selectedFigureY, destinationFieldX, destinationFieldY);
 
-                        whiteKingIsCheck = logic.checkWhetherWhiteKingIsChecked(gameboard.getBoard());
-                        blackKingIsCheck = logic.checkWhetherBlackKingIsChecked(gameboard.getBoard());
-
                         setNextPlayer();
+
                         logic.refreshPossibleMovementsDictionary(gameboard.getBoard());
+
+                        if (whiteKingIsChecked)
+                        {
+                            blackPlayerWon = whiteKingIsChecked = logic.checkWhetherWhiteKingIsChecked(gameboard.getBoard());
+                            isGameFinished = blackPlayerWon;
+                        }
+                        else
+                        {
+                            whiteKingIsChecked = logic.checkWhetherWhiteKingIsChecked(gameboard.getBoard());
+                        }
+                        
+
+                        if (blackKingIsChecked)
+                        {
+                            whitePlayerWon = blackKingIsChecked = logic.checkWhetherBlackKingIsChecked(gameboard.getBoard());
+                            isGameFinished = whitePlayerWon;
+                        }
+                        else
+                        {
+                            blackKingIsChecked = logic.checkWhetherBlackKingIsChecked(gameboard.getBoard());
+                        }
+
                         Console.Clear();
 
                         printPossibleMovements();
+                        printKingIsCheckedStatus();
                     }
                     else
                     {
@@ -225,10 +252,55 @@ namespace ChessGame
 
             Console.BackgroundColor = ConsoleColor.Black;
 
-            if (isPlayerQuit)
+            if (quit)
             {
                 Console.WriteLine("Player has quit the Game!");
             }
+
+            if (blackPlayerWon | whitePlayerWon)
+            {
+                displayPlayerWon();
+            }
+        }
+
+        private void displayPlayerWon()
+        {
+            Console.Clear();
+            Console.WriteLine(Constants.PLAYERWONTEXT);
+
+            if (whitePlayerWon)
+            {
+                Console.WriteLine(players[0].getName() + " has won!");
+            }
+            if(blackPlayerWon)
+            {
+                Console.WriteLine(players[1].getName() + " has won!");
+            }
+
+            Console.ReadKey();
+        }
+
+        private void printKingIsCheckedStatus()
+        {
+            if (whiteKingIsChecked)
+            {
+                Console.WriteLine("The White King is checked!");
+            }
+            else
+            {
+                Console.WriteLine("The White King is not checked!");
+            }
+
+            if (blackKingIsChecked)
+            {
+                Console.WriteLine("The Black King is checked!");
+            }
+            else
+            {
+                Console.WriteLine("The Black King is not checked!");
+            }
+
+            Console.WriteLine(string.Empty);
         }
 
         private void setNameOfPlayers()
@@ -321,7 +393,7 @@ namespace ChessGame
             int rowNumber = -1;
             int columnNumber = -1;
 
-            while (!inputIsCorrect & !isPlayerQuit & !isPlayerResetTurn)
+            while (!inputIsCorrect & !quit & !isPlayerResetTurn)
             {
                 Console.WriteLine("Type in the row of the Destination Field!");
                 Console.WriteLine("Please Type a Number between 1 to 8!");
@@ -331,7 +403,7 @@ namespace ChessGame
 
                 if (input == Constants.QUIT)
                 {
-                    isPlayerQuit = true;
+                    quit = true;
                 }
                 else if (input == Constants.RESETTURN)
                 {
@@ -349,7 +421,7 @@ namespace ChessGame
 
             inputIsCorrect = false;
 
-            while (!inputIsCorrect & !isPlayerQuit & !isPlayerResetTurn)
+            while (!inputIsCorrect & !quit & !isPlayerResetTurn)
             {
                 Console.WriteLine("Type in the column, where your Figure is occupied!");
                 Console.WriteLine("Please Type a character between a to h!");
@@ -359,7 +431,7 @@ namespace ChessGame
 
                 if (input == Constants.QUIT)
                 {
-                    isPlayerQuit = true;
+                    quit = true;
                 }
                 else if (input == Constants.RESETTURN)
                 {
@@ -375,7 +447,7 @@ namespace ChessGame
                 }
             }
 
-            if (isPlayerQuit | isPlayerResetTurn)
+            if (quit | isPlayerResetTurn)
             {
                 fieldIsChosen = false;
             }
@@ -415,7 +487,7 @@ namespace ChessGame
             int rowNumber = -1;
             int columnNumber = -1;
 
-            while (!inputIsCorrect & !isPlayerQuit & !isPlayerResetTurn)
+            while (!inputIsCorrect & !quit & !isPlayerResetTurn)
             {
                 Console.WriteLine("Type in the row, where your Figure is occupied!");
                 Console.WriteLine("Please Type a Number between 1 to 8!");
@@ -425,7 +497,7 @@ namespace ChessGame
 
                 if (input == Constants.QUIT)
                 {
-                    isPlayerQuit = true;
+                    quit = true;
                 }
                 else if (input == Constants.RESETTURN)
                 {
@@ -443,7 +515,7 @@ namespace ChessGame
 
             inputIsCorrect = false;
 
-            while (!inputIsCorrect & !isPlayerQuit & !isPlayerResetTurn)
+            while (!inputIsCorrect & !quit & !isPlayerResetTurn)
             {
                 Console.WriteLine("Type in the column, where your Figure is occupied!");
                 Console.WriteLine("Please Type a character between a to h!");
@@ -453,7 +525,7 @@ namespace ChessGame
 
                 if (input == Constants.QUIT)
                 {
-                    isPlayerQuit = true;
+                    quit = true;
                 }
                 else if (input == Constants.RESETTURN)
                 {
@@ -469,7 +541,7 @@ namespace ChessGame
                 }
             }
 
-            if (isPlayerQuit | isPlayerResetTurn)
+            if (quit | isPlayerResetTurn)
             {
                 fieldIsChosen = false;
             }
@@ -499,6 +571,9 @@ namespace ChessGame
 
         private void resetGame()
         {
+            whitePlayerWon = false;
+            blackPlayerWon = false;
+
             turnNumber = 1;
             playerTurn = 0;
             figureId = 0;
@@ -506,7 +581,6 @@ namespace ChessGame
             figureIsChosen = false;
             destinationFieldIsChosen = false;
 
-            isPlayerQuit = false;
             isGameFinished = false;
 
             gameboard.resetGameboard();
@@ -521,7 +595,9 @@ namespace ChessGame
 
             logic.resetFirstMoveOverList();
             logic.refreshPossibleMovementsDictionary(gameboard.getBoard());
+
             printPossibleMovements();
+            printKingIsCheckedStatus();
         }
 
         private void createBlackPlayerFigures()

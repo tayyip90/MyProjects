@@ -41,6 +41,23 @@ namespace ChessGame
 
         public const string SELECTEDFIELDISOCCUPIEDWITHENEMYFIGURE = "The Field you have selected is occupied, but the Figure belongs to the Enemy!";
 
+        public const string PLAYERWONTEXT =       "+--------------------------------------------------------------------------------------------------------------------------------+\n"
+                                                + "|                                                               *                                                                |\n"
+                                                + "|                                                              * *                                                               |\n"
+                                                + "|                                                              *  *                                                              |\n"
+                                                + "|                                                               *   *                                                            |\n"
+                                                + "|                                                                 *   *                                                          |\n"
+                                                + "|                                                    ************* *    *                                                        |\n"
+                                                + "|                                                   *          *  *       *************                                          |\n"
+                                                + "|                                                    *************                                                               |\n"
+                                                + "|                                                   *          *  *                                                              |\n"
+                                                + "|                                                    *************                                                               |\n"
+                                                + "|                                                   *          *  *                                                              |\n"
+                                                + "|                                                    *************                                                               |\n"
+                                                + "|                                                   *          *  *       *************                                          |\n"
+                                                + "|                                                    *********************                                                       |\n"
+                                                + "+--------------------------------------------------------------------------------------------------------------------------------+\n\n";
+
         public static int convertRowCharToRowNumberForGameboard(char row)
         {
             int rowNumber = -1;
