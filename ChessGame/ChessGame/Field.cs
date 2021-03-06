@@ -83,5 +83,15 @@ namespace ChessGame
             isFieldOccupied = false;
             figureOnTheField = null;
         }
-   }
+
+        public Constants.Row getRow()
+        {
+            return this.row;
+        }
+
+        public Constants.Column getColumn()
+        {
+            return this.column;
+        }
+    }
 }

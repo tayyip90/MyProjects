@@ -9,6 +9,7 @@ namespace ChessGame
         private ChessLogic logic;
         private Player[] players;
         private int playerTurn;
+        private List<string> log;
 
         private ChessGameboard gameboard;
 
@@ -50,6 +51,7 @@ namespace ChessGame
         public Game()
         {
             allFigures = new List<ChessFigure>();
+            log = new List<string>();
 
             blackPlayerFiguresOutOfGame = new List<ChessFigure>();
             whitePlayerFiguresOutOfGame = new List<ChessFigure>();
@@ -196,19 +198,32 @@ namespace ChessGame
                 {
                     if (logic.ckeckWhetherMovementIsCorrect(gameboard.getBoard(), selectedFigureX, selectedFigureY, destinationFieldX, destinationFieldY))
                     {
-                        if(logic.isFieldOccupied(gameboard.getBoard(), destinationFieldY, destinationFieldX)){
+                        string removedFigureText = string.Empty;
+                        string logText = players[playerTurn].getName() + " / " + players[playerTurn].getColor() + " Player moved his ";
+
+                        if (logic.isFieldOccupied(gameboard.getBoard(), destinationFieldY, destinationFieldX)){
                             if(playerTurn == 0)
                             {
+                                removedFigureText = "removed the " + gameboard.getBoard()[destinationFieldY, destinationFieldX].getChessFigure().ToString() + " of " + players[1].getName();
                                 blackPlayerFiguresOutOfGame.Add(gameboard.getBoard()[destinationFieldY, destinationFieldX].removeFigure());
                             }
                             else
                             {
+                                removedFigureText = "removed the " + gameboard.getBoard()[destinationFieldY, destinationFieldX].getChessFigure().ToString() + " of " + players[0].getName();
                                 whitePlayerFiguresOutOfGame.Add(gameboard.getBoard()[destinationFieldY, destinationFieldX].removeFigure());
                             }
                         }
 
                         logic.addFigureIdToFirstMoveOverList(gameboard.getBoard(), selectedFigureY, selectedFigureX);
+
+                        logText += gameboard.getBoard()[selectedFigureY, selectedFigureX].getChessFigure().ToString() + " to "
+                            + gameboard.getBoard()[destinationFieldY, destinationFieldX].getRow() + ", " + gameboard.getBoard()[destinationFieldY, destinationFieldX].getColumn();
+
+                        if (removedFigureText != string.Empty) logText += " and " + removedFigureText;
+
                         gameboard.moveFigureToPosition(selectedFigureX, selectedFigureY, destinationFieldX, destinationFieldY);
+
+                        log.Add(logText);
 
                         setNextPlayer();
 
@@ -238,6 +253,7 @@ namespace ChessGame
                         Console.Clear();
 
                         printPossibleMovements();
+                        displayLog();
                         printKingIsCheckedStatus();
                     }
                     else
@@ -586,6 +602,7 @@ namespace ChessGame
             gameboard.resetGameboard();
 
             allFigures.Clear();
+            log.Clear();
 
             whitePlayerFiguresOutOfGame.Clear();
             blackPlayerFiguresOutOfGame.Clear();
@@ -598,6 +615,16 @@ namespace ChessGame
 
             printPossibleMovements();
             printKingIsCheckedStatus();
+        }
+
+        private void displayLog()
+        {
+            foreach(string turn in log)
+            {
+                Console.WriteLine(turn);
+            }
+
+            Console.WriteLine("");
         }
 
         private void createBlackPlayerFigures()
