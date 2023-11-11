@@ -29,7 +29,7 @@ namespace ChessGame
         private bool isGameFinished;
         private bool isPlayerResetTurn;
 
-        private bool newGame;
+        private bool startGame;
         private bool quit;
 
         private bool figureIsChosen;
@@ -61,21 +61,21 @@ namespace ChessGame
 
             players = new Player[2];
 
-            newGame = false;
+            startGame = false;
             quit = false;
         }
 
-        public void start()
+        public void Intro()
         {
             while (!quit)
             {
-                printIntro();
+                PrintIntro();
 
-                if (newGame)
+                if (startGame)
                 {
                     Console.Clear();
-                    NewGame();
-                    newGame = false;
+                    Start();
+                    startGame = false;
                 }
             }
 
@@ -84,13 +84,13 @@ namespace ChessGame
             Console.WriteLine("");
         }
 
-        private void printIntro()
+        private void PrintIntro()
         {
             inputIsCorrect = false;
 
             Console.Clear();
 
-            showMenu();
+            ShowMenu();
 
             while (!inputIsCorrect)
             {
@@ -99,7 +99,7 @@ namespace ChessGame
                 if (input == Constants.NEWGAME)
                 {
                     inputIsCorrect = true;
-                    newGame = true;
+                    startGame = true;
                 }
                 else if (input == Constants.QUIT)
                 {
@@ -108,7 +108,7 @@ namespace ChessGame
                 }
                 else if (input == Constants.HELP)
                 {
-                    displayInputFormat();
+                    DisplayInputFormat();
 
                     Console.WriteLine();
                     Console.Write("Press any Key to return to Menu ...");
@@ -116,26 +116,26 @@ namespace ChessGame
 
                     Console.Clear();
 
-                    showMenu();
+                    ShowMenu();
                 }
                 else
                 {
                     Console.Clear();
 
-                    showMenu();
+                    ShowMenu();
                 }
             }
         }
 
-        private void displayInputIsEmptyOrHasNotTheRightFormat()
+        private void DisplayInputIsEmptyOrHasNotTheRightFormat()
         {
             Console.WriteLine("");
             Console.WriteLine("Input was Empty or has not the right Format!");
             Console.WriteLine("");
-            displayInputFormat();
+            DisplayInputFormat();
         }
 
-        private void displayInputFormat()
+        private void DisplayInputFormat()
         {
             Console.WriteLine("");
             Console.WriteLine("At first the Player has to choose the Field where the Figure is placed.");
@@ -144,7 +144,7 @@ namespace ChessGame
             Console.WriteLine("");
         }
 
-        private void showMenu()
+        private void ShowMenu()
         {
             Console.WriteLine(Constants.PLACEHOLDERSTRINGSTARS);
             Console.WriteLine(Constants.TITLE);
@@ -157,13 +157,13 @@ namespace ChessGame
             Console.WriteLine("");
         }
 
-        private void NewGame()
+        private void Start()
         {
-            setNameOfPlayers();
+            SetNameOfPlayers();
 
             Console.BackgroundColor = ConsoleColor.Blue;
 
-            resetGame();
+            ResetGame();
 
             while (!isGameFinished & !quit)
             {
@@ -176,48 +176,48 @@ namespace ChessGame
 
                     gameboard.printBoardWithFigures();
 
-                    printTextSelectFigureForPlayer();
+                    PrintTextSelectFigureForPlayer();
 
                     while (!figureIsChosen & !isPlayerResetTurn & !quit)
                     {
-                        figureIsChosen = selectFigure();
+                        figureIsChosen = SelectFigure();
                     }
 
-                    printTextSelectDestinationField();
+                    PrintTextSelectDestinationField();
 
                     if (figureIsChosen)
                     {
                         while (!destinationFieldIsChosen & !isPlayerResetTurn & !quit)
                         {
-                            destinationFieldIsChosen = selectDestination();
+                            destinationFieldIsChosen = SelectDestination();
                         }
                     }
                 }
 
                 if(figureIsChosen & destinationFieldIsChosen)
                 {
-                    if (logic.ckeckWhetherMovementIsCorrect(gameboard.getBoard(), selectedFigureX, selectedFigureY, destinationFieldX, destinationFieldY))
+                    if (logic.CkeckWhetherMovementIsCorrect(gameboard.getBoard(), selectedFigureX, selectedFigureY, destinationFieldX, destinationFieldY))
                     {
                         string removedFigureText = string.Empty;
                         string logText = players[playerTurn].getName() + " / " + players[playerTurn].getColor() + " Player moved his ";
 
-                        if (logic.isFieldOccupied(gameboard.getBoard(), destinationFieldY, destinationFieldX)){
+                        if (logic.IsFieldOccupied(gameboard.getBoard(), destinationFieldY, destinationFieldX)){
                             if(playerTurn == 0)
                             {
-                                removedFigureText = "removed the " + gameboard.getBoard()[destinationFieldY, destinationFieldX].getChessFigure().ToString() + " of " + players[1].getName();
-                                blackPlayerFiguresOutOfGame.Add(gameboard.getBoard()[destinationFieldY, destinationFieldX].removeFigure());
+                                removedFigureText = "removed the " + gameboard.getBoard()[destinationFieldY, destinationFieldX].GetChessFigure().ToString() + " of " + players[1].getName();
+                                blackPlayerFiguresOutOfGame.Add(gameboard.getBoard()[destinationFieldY, destinationFieldX].RemoveFigure());
                             }
                             else
                             {
-                                removedFigureText = "removed the " + gameboard.getBoard()[destinationFieldY, destinationFieldX].getChessFigure().ToString() + " of " + players[0].getName();
-                                whitePlayerFiguresOutOfGame.Add(gameboard.getBoard()[destinationFieldY, destinationFieldX].removeFigure());
+                                removedFigureText = "removed the " + gameboard.getBoard()[destinationFieldY, destinationFieldX].GetChessFigure().ToString() + " of " + players[0].getName();
+                                whitePlayerFiguresOutOfGame.Add(gameboard.getBoard()[destinationFieldY, destinationFieldX].RemoveFigure());
                             }
                         }
 
-                        logic.addFigureIdToFirstMoveOverList(gameboard.getBoard(), selectedFigureY, selectedFigureX);
+                        logic.AddFigureIdToFirstMoveOverList(gameboard.getBoard(), selectedFigureY, selectedFigureX);
 
-                        logText += gameboard.getBoard()[selectedFigureY, selectedFigureX].getChessFigure().ToString() + " to "
-                            + gameboard.getBoard()[destinationFieldY, destinationFieldX].getRow() + ", " + gameboard.getBoard()[destinationFieldY, destinationFieldX].getColumn();
+                        logText += gameboard.getBoard()[selectedFigureY, selectedFigureX].GetChessFigure().ToString() + " to "
+                            + gameboard.getBoard()[destinationFieldY, destinationFieldX].GetRow() + ", " + gameboard.getBoard()[destinationFieldY, destinationFieldX].GetColumn();
 
                         if (removedFigureText != string.Empty) logText += " and " + removedFigureText;
 
@@ -225,36 +225,36 @@ namespace ChessGame
 
                         log.Add(logText);
 
-                        setNextPlayer();
+                        SetNextPlayer();
 
-                        logic.refreshPossibleMovementsDictionary(gameboard.getBoard());
+                        logic.RefreshPossibleMovementsDictionary(gameboard.getBoard());
 
                         if (whiteKingIsChecked)
                         {
-                            blackPlayerWon = whiteKingIsChecked = logic.checkWhetherWhiteKingIsChecked(gameboard.getBoard());
+                            blackPlayerWon = whiteKingIsChecked = logic.CheckWhetherWhiteKingIsChecked(gameboard.getBoard());
                             isGameFinished = blackPlayerWon;
                         }
                         else
                         {
-                            whiteKingIsChecked = logic.checkWhetherWhiteKingIsChecked(gameboard.getBoard());
+                            whiteKingIsChecked = logic.CheckWhetherWhiteKingIsChecked(gameboard.getBoard());
                         }
                         
 
                         if (blackKingIsChecked)
                         {
-                            whitePlayerWon = blackKingIsChecked = logic.checkWhetherBlackKingIsChecked(gameboard.getBoard());
+                            whitePlayerWon = blackKingIsChecked = logic.CheckWhetherBlackKingIsChecked(gameboard.getBoard());
                             isGameFinished = whitePlayerWon;
                         }
                         else
                         {
-                            blackKingIsChecked = logic.checkWhetherBlackKingIsChecked(gameboard.getBoard());
+                            blackKingIsChecked = logic.CheckWhetherBlackKingIsChecked(gameboard.getBoard());
                         }
 
                         Console.Clear();
 
-                        printPossibleMovements();
-                        displayLog();
-                        printKingIsCheckedStatus();
+                        PrintPossibleMovements();
+                        DisplayLog();
+                        PrintKingIsCheckedStatus();
                     }
                     else
                     {
@@ -275,11 +275,11 @@ namespace ChessGame
 
             if (blackPlayerWon | whitePlayerWon)
             {
-                displayPlayerWon();
+                DisplayPlayerWon();
             }
         }
 
-        private void displayPlayerWon()
+        private void DisplayPlayerWon()
         {
             Console.Clear();
             Console.WriteLine(Constants.PLAYERWONTEXT);
@@ -296,7 +296,7 @@ namespace ChessGame
             Console.ReadKey();
         }
 
-        private void printKingIsCheckedStatus()
+        private void PrintKingIsCheckedStatus()
         {
             if (whiteKingIsChecked)
             {
@@ -319,17 +319,17 @@ namespace ChessGame
             Console.WriteLine(string.Empty);
         }
 
-        private void setNameOfPlayers()
+        private void SetNameOfPlayers()
         {
             for (int i = 0; i < players.Length; i++)
             {
-                setName(i);
+                SetName(i);
             }
         }
 
-        private void setName(int playernumber)
+        private void SetName(int playernumber)
         {
-            showTitle();
+            ShowTitle();
             string name = string.Empty;
             do
             {
@@ -356,7 +356,7 @@ namespace ChessGame
             Console.Clear();
         }
 
-        private void showTitle()
+        private void ShowTitle()
         {
             Console.WriteLine(Constants.PLACEHOLDERSTRINGSTARS);
             Console.WriteLine(Constants.TITLE);
@@ -364,9 +364,9 @@ namespace ChessGame
             Console.WriteLine("");
         }
 
-        private void printPossibleMovements()
+        private void PrintPossibleMovements()
         {
-            List<string> possibleMovements = logic.getPossibleMovmentsOfFigures(allFigures);
+            List<string> possibleMovements = logic.GetPossibleMovmentsOfFigures(allFigures);
 
             foreach(string line in possibleMovements)
             {
@@ -376,7 +376,7 @@ namespace ChessGame
             Console.WriteLine(string.Empty);
         }
 
-        private void setNextPlayer()
+        private void SetNextPlayer()
         {
             if(playerTurn == 0)
             {
@@ -390,17 +390,17 @@ namespace ChessGame
             turnNumber++;
         }
 
-        private void printTextSelectDestinationField()
+        private void PrintTextSelectDestinationField()
         {
             Console.WriteLine("Select the Destination Field!");
         }
 
-        private void printTextSelectFigureForPlayer()
+        private void PrintTextSelectFigureForPlayer()
         {
             Console.WriteLine("Select your Figure, that you want to move!");
         }
 
-        private bool selectDestination()
+        private bool SelectDestination()
         {
             inputIsCorrect = false;
             bool fieldIsChosen = false;
@@ -469,9 +469,9 @@ namespace ChessGame
             }
             else
             {
-                if(logic.isFieldOccupied(gameboard.getBoard(),rowNumber, columnNumber))
+                if(logic.IsFieldOccupied(gameboard.getBoard(),rowNumber, columnNumber))
                 {
-                    if (logic.isEnemyField(gameboard.getBoard(), players[playerTurn].getColor(), rowNumber, columnNumber))
+                    if (logic.IsEnemyField(gameboard.getBoard(), players[playerTurn].getColor(), rowNumber, columnNumber))
                     {
                         fieldIsChosen = true;
                         destinationFieldX = columnNumber;
@@ -494,7 +494,7 @@ namespace ChessGame
             return fieldIsChosen;
         }
 
-        private bool selectFigure()
+        private bool SelectFigure()
         {
             inputIsCorrect = false;
             bool fieldIsChosen = false;
@@ -563,9 +563,9 @@ namespace ChessGame
             }
             else
             {
-                if(logic.isFieldOccupied(gameboard.getBoard(), rowNumber, columnNumber))
+                if(logic.IsFieldOccupied(gameboard.getBoard(), rowNumber, columnNumber))
                 {
-                    if(logic.checkWhetherFigureBelongsPlayer(gameboard.getBoard(), players[playerTurn].getColor(), rowNumber, columnNumber))
+                    if(logic.CheckWhetherFigureBelongsPlayer(gameboard.getBoard(), players[playerTurn].getColor(), rowNumber, columnNumber))
                     {
                         fieldIsChosen = true;
                         selectedFigureX = columnNumber;
@@ -585,7 +585,7 @@ namespace ChessGame
             return fieldIsChosen;
         }
 
-        private void resetGame()
+        private void ResetGame()
         {
             whitePlayerWon = false;
             blackPlayerWon = false;
@@ -607,17 +607,17 @@ namespace ChessGame
             whitePlayerFiguresOutOfGame.Clear();
             blackPlayerFiguresOutOfGame.Clear();
 
-            createWhitePlayerFigures();
-            createBlackPlayerFigures();
+            CreateWhitePlayerFigures();
+            CreateBlackPlayerFigures();
 
-            logic.resetFirstMoveOverList();
-            logic.refreshPossibleMovementsDictionary(gameboard.getBoard());
+            logic.ResetFirstMoveOverList();
+            logic.RefreshPossibleMovementsDictionary(gameboard.getBoard());
 
-            printPossibleMovements();
-            printKingIsCheckedStatus();
+            PrintPossibleMovements();
+            PrintKingIsCheckedStatus();
         }
 
-        private void displayLog()
+        private void DisplayLog()
         {
             foreach(string turn in log)
             {
@@ -627,45 +627,45 @@ namespace ChessGame
             Console.WriteLine("");
         }
 
-        private void createBlackPlayerFigures()
+        private void CreateBlackPlayerFigures()
         {
             KingFigur blackPlayerKing = new KingFigur(Constants.ColorEnum.BLACK, ++figureId);
-            logic.addFigureIdToPossibleMovementsBlackFiguresDictionary(blackPlayerKing.getID());
+            logic.AddFigureIdToPossibleMovementsBlackFiguresDictionary(blackPlayerKing.getID());
             allFigures.Add(blackPlayerKing);
             gameboard.setFigureToPosition(blackPlayerKing, Constants.Row.Eight, Constants.Column.D);
 
             QueenFigur blackPlayerQueen = new QueenFigur(Constants.ColorEnum.BLACK, ++figureId);
-            logic.addFigureIdToPossibleMovementsBlackFiguresDictionary(blackPlayerQueen.getID());
+            logic.AddFigureIdToPossibleMovementsBlackFiguresDictionary(blackPlayerQueen.getID());
             allFigures.Add(blackPlayerQueen);
             gameboard.setFigureToPosition(blackPlayerQueen, Constants.Row.Eight, Constants.Column.E);
 
             BishopFigur blackPlayerBishop1 = new BishopFigur(Constants.ColorEnum.BLACK, ++figureId);
             allFigures.Add(blackPlayerBishop1);
-            logic.addFigureIdToPossibleMovementsBlackFiguresDictionary(blackPlayerBishop1.getID());
+            logic.AddFigureIdToPossibleMovementsBlackFiguresDictionary(blackPlayerBishop1.getID());
             gameboard.setFigureToPosition(blackPlayerBishop1, Constants.Row.Eight, Constants.Column.C);
 
             BishopFigur blackPlayerBishop2 = new BishopFigur(Constants.ColorEnum.BLACK, ++figureId);
-            logic.addFigureIdToPossibleMovementsBlackFiguresDictionary(blackPlayerBishop2.getID());
+            logic.AddFigureIdToPossibleMovementsBlackFiguresDictionary(blackPlayerBishop2.getID());
             allFigures.Add(blackPlayerBishop2);
             gameboard.setFigureToPosition(blackPlayerBishop2, Constants.Row.Eight, Constants.Column.F);
 
             KnightFigur blackPlayerKnight1 = new KnightFigur(Constants.ColorEnum.BLACK, ++figureId);
-            logic.addFigureIdToPossibleMovementsBlackFiguresDictionary(blackPlayerKnight1.getID());
+            logic.AddFigureIdToPossibleMovementsBlackFiguresDictionary(blackPlayerKnight1.getID());
             allFigures.Add(blackPlayerKnight1);
             gameboard.setFigureToPosition(blackPlayerKnight1, Constants.Row.Eight, Constants.Column.B);
 
             KnightFigur blackPlayerKnight2 = new KnightFigur(Constants.ColorEnum.BLACK, ++figureId);
-            logic.addFigureIdToPossibleMovementsBlackFiguresDictionary(blackPlayerKnight2.getID());
+            logic.AddFigureIdToPossibleMovementsBlackFiguresDictionary(blackPlayerKnight2.getID());
             allFigures.Add(blackPlayerKnight2);
             gameboard.setFigureToPosition(blackPlayerKnight2, Constants.Row.Eight, Constants.Column.G);
 
             RookFigur blackPlayerRook1 = new RookFigur(Constants.ColorEnum.BLACK, ++figureId);
-            logic.addFigureIdToPossibleMovementsBlackFiguresDictionary(blackPlayerRook1.getID());
+            logic.AddFigureIdToPossibleMovementsBlackFiguresDictionary(blackPlayerRook1.getID());
             allFigures.Add(blackPlayerRook1);
             gameboard.setFigureToPosition(blackPlayerRook1, Constants.Row.Eight, Constants.Column.A);
 
             RookFigur blackPlayerRook2 = new RookFigur(Constants.ColorEnum.BLACK, ++figureId);
-            logic.addFigureIdToPossibleMovementsBlackFiguresDictionary(blackPlayerRook2.getID());
+            logic.AddFigureIdToPossibleMovementsBlackFiguresDictionary(blackPlayerRook2.getID());
             allFigures.Add(blackPlayerRook2);
             gameboard.setFigureToPosition(blackPlayerRook2, Constants.Row.Eight, Constants.Column.H);
 
@@ -674,51 +674,51 @@ namespace ChessGame
             for (int i = 0; i < 8; i++)
             {
                 PawnFigur blackPlayerPawn = new PawnFigur(Constants.ColorEnum.BLACK, ++figureId);
-                logic.addFigureIdToPossibleMovementsBlackFiguresDictionary(blackPlayerPawn.getID());
+                logic.AddFigureIdToPossibleMovementsBlackFiguresDictionary(blackPlayerPawn.getID());
                 allFigures.Add(blackPlayerPawn);
                 gameboard.setFigureToPosition(blackPlayerPawn, Constants.Row.Seven, columnForPawns);
                 columnForPawns++;
             }
         }
 
-        private void createWhitePlayerFigures()
+        private void CreateWhitePlayerFigures()
         {
             KingFigur whitePlayerKing = new KingFigur(Constants.ColorEnum.WHITE, ++figureId);
-            logic.addFigureIdToPossibleMovementsWhiteFiguresDictionary(whitePlayerKing.getID());
+            logic.AddFigureIdToPossibleMovementsWhiteFiguresDictionary(whitePlayerKing.getID());
             allFigures.Add(whitePlayerKing);
             gameboard.setFigureToPosition(whitePlayerKing, Constants.Row.One, Constants.Column.D);
 
             QueenFigur whitePlayerQueen = new QueenFigur(Constants.ColorEnum.WHITE, ++figureId);
-            logic.addFigureIdToPossibleMovementsWhiteFiguresDictionary(whitePlayerQueen.getID());
+            logic.AddFigureIdToPossibleMovementsWhiteFiguresDictionary(whitePlayerQueen.getID());
             allFigures.Add(whitePlayerQueen);
             gameboard.setFigureToPosition(whitePlayerQueen, Constants.Row.One, Constants.Column.E);
 
             BishopFigur whitePlayerBishop1 = new BishopFigur(Constants.ColorEnum.WHITE, ++figureId);
-            logic.addFigureIdToPossibleMovementsWhiteFiguresDictionary(whitePlayerBishop1.getID());
+            logic.AddFigureIdToPossibleMovementsWhiteFiguresDictionary(whitePlayerBishop1.getID());
             allFigures.Add(whitePlayerBishop1);
             gameboard.setFigureToPosition(whitePlayerBishop1, Constants.Row.One, Constants.Column.C);
             BishopFigur whitePlayerBishop2 = new BishopFigur(Constants.ColorEnum.WHITE, ++figureId);
-            logic.addFigureIdToPossibleMovementsWhiteFiguresDictionary(whitePlayerBishop2.getID());
+            logic.AddFigureIdToPossibleMovementsWhiteFiguresDictionary(whitePlayerBishop2.getID());
             allFigures.Add(whitePlayerBishop2);
             gameboard.setFigureToPosition(whitePlayerBishop2, Constants.Row.One, Constants.Column.F);
 
             KnightFigur whitePlayerKnight1 = new KnightFigur(Constants.ColorEnum.WHITE, ++figureId);
-            logic.addFigureIdToPossibleMovementsWhiteFiguresDictionary(whitePlayerKnight1.getID());
+            logic.AddFigureIdToPossibleMovementsWhiteFiguresDictionary(whitePlayerKnight1.getID());
             allFigures.Add(whitePlayerKnight1);
             gameboard.setFigureToPosition(whitePlayerKnight1, Constants.Row.One, Constants.Column.B);
 
             KnightFigur whitePlayerKnight2 = new KnightFigur(Constants.ColorEnum.WHITE, ++figureId);
-            logic.addFigureIdToPossibleMovementsWhiteFiguresDictionary(whitePlayerKnight2.getID());
+            logic.AddFigureIdToPossibleMovementsWhiteFiguresDictionary(whitePlayerKnight2.getID());
             allFigures.Add(whitePlayerKnight2);
             gameboard.setFigureToPosition(whitePlayerKnight2, Constants.Row.One, Constants.Column.G);
 
             RookFigur whitePlayerRook1 = new RookFigur(Constants.ColorEnum.WHITE, ++figureId);
-            logic.addFigureIdToPossibleMovementsWhiteFiguresDictionary(whitePlayerRook1.getID());
+            logic.AddFigureIdToPossibleMovementsWhiteFiguresDictionary(whitePlayerRook1.getID());
             allFigures.Add(whitePlayerRook1);
             gameboard.setFigureToPosition(whitePlayerRook1, Constants.Row.One, Constants.Column.A);
 
             RookFigur whitePlayerRook2 = new RookFigur(Constants.ColorEnum.WHITE, ++figureId);
-            logic.addFigureIdToPossibleMovementsWhiteFiguresDictionary(whitePlayerRook2.getID());
+            logic.AddFigureIdToPossibleMovementsWhiteFiguresDictionary(whitePlayerRook2.getID());
             allFigures.Add(whitePlayerRook2);
             gameboard.setFigureToPosition(whitePlayerRook2, Constants.Row.One, Constants.Column.H);
 
@@ -727,7 +727,7 @@ namespace ChessGame
             for (int i = 0; i < 8; i++)
             {
                 PawnFigur whitePlayerPawn = new PawnFigur(Constants.ColorEnum.WHITE, ++figureId);
-                logic.addFigureIdToPossibleMovementsWhiteFiguresDictionary(whitePlayerPawn.getID());
+                logic.AddFigureIdToPossibleMovementsWhiteFiguresDictionary(whitePlayerPawn.getID());
                 allFigures.Add(whitePlayerPawn);
                 gameboard.setFigureToPosition(whitePlayerPawn, Constants.Row.Two, columnForPawns);
                 columnForPawns++;

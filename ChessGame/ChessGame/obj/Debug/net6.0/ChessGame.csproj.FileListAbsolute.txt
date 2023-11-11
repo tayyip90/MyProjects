@@ -1,0 +1,14 @@
+C:\Users\tatli\Source\Repos\tayyip90\MyProjects\ChessGame\ChessGame\bin\Debug\net6.0\ChessGame.exe
+C:\Users\tatli\Source\Repos\tayyip90\MyProjects\ChessGame\ChessGame\bin\Debug\net6.0\ChessGame.deps.json
+C:\Users\tatli\Source\Repos\tayyip90\MyProjects\ChessGame\ChessGame\bin\Debug\net6.0\ChessGame.runtimeconfig.json
+C:\Users\tatli\Source\Repos\tayyip90\MyProjects\ChessGame\ChessGame\bin\Debug\net6.0\ChessGame.dll
+C:\Users\tatli\Source\Repos\tayyip90\MyProjects\ChessGame\ChessGame\bin\Debug\net6.0\ChessGame.pdb
+C:\Users\tatli\Source\Repos\tayyip90\MyProjects\ChessGame\ChessGame\obj\Debug\net6.0\ChessGame.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\tatli\Source\Repos\tayyip90\MyProjects\ChessGame\ChessGame\obj\Debug\net6.0\ChessGame.AssemblyInfoInputs.cache
+C:\Users\tatli\Source\Repos\tayyip90\MyProjects\ChessGame\ChessGame\obj\Debug\net6.0\ChessGame.AssemblyInfo.cs
+C:\Users\tatli\Source\Repos\tayyip90\MyProjects\ChessGame\ChessGame\obj\Debug\net6.0\ChessGame.csproj.CoreCompileInputs.cache
+C:\Users\tatli\Source\Repos\tayyip90\MyProjects\ChessGame\ChessGame\obj\Debug\net6.0\ChessGame.dll
+C:\Users\tatli\Source\Repos\tayyip90\MyProjects\ChessGame\ChessGame\obj\Debug\net6.0\refint\ChessGame.dll
+C:\Users\tatli\Source\Repos\tayyip90\MyProjects\ChessGame\ChessGame\obj\Debug\net6.0\ChessGame.pdb
+C:\Users\tatli\Source\Repos\tayyip90\MyProjects\ChessGame\ChessGame\obj\Debug\net6.0\ChessGame.genruntimeconfig.cache
+C:\Users\tatli\Source\Repos\tayyip90\MyProjects\ChessGame\ChessGame\obj\Debug\net6.0\ref\ChessGame.dll

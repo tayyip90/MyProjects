@@ -7,3 +7,12 @@ C:\Users\Tayyip\Source\Repos\tayyip90\MyProjects\ChessGame\ChessGame\bin\Debug\n
 C:\Users\Tayyip\Source\Repos\tayyip90\MyProjects\ChessGame\ChessGame\bin\Debug\netcoreapp3.1\ChessGame.pdb
 C:\Users\Tayyip\Source\Repos\tayyip90\MyProjects\ChessGame\ChessGame\obj\Debug\netcoreapp3.1\ChessGame.dll
 C:\Users\Tayyip\Source\Repos\tayyip90\MyProjects\ChessGame\ChessGame\obj\Debug\netcoreapp3.1\ChessGame.pdb
+C:\Users\tatli\Source\Repos\tayyip90\MyProjects\ChessGame\ChessGame\bin\Debug\netcoreapp3.1\ChessGame.deps.json
+C:\Users\tatli\Source\Repos\tayyip90\MyProjects\ChessGame\ChessGame\bin\Debug\netcoreapp3.1\ChessGame.dll
+C:\Users\tatli\Source\Repos\tayyip90\MyProjects\ChessGame\ChessGame\bin\Debug\netcoreapp3.1\ChessGame.pdb
+C:\Users\tatli\Source\Repos\tayyip90\MyProjects\ChessGame\ChessGame\obj\Debug\netcoreapp3.1\ChessGame.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\tatli\Source\Repos\tayyip90\MyProjects\ChessGame\ChessGame\obj\Debug\netcoreapp3.1\ChessGame.AssemblyInfoInputs.cache
+C:\Users\tatli\Source\Repos\tayyip90\MyProjects\ChessGame\ChessGame\obj\Debug\netcoreapp3.1\ChessGame.AssemblyInfo.cs
+C:\Users\tatli\Source\Repos\tayyip90\MyProjects\ChessGame\ChessGame\obj\Debug\netcoreapp3.1\ChessGame.csproj.CoreCompileInputs.cache
+C:\Users\tatli\Source\Repos\tayyip90\MyProjects\ChessGame\ChessGame\obj\Debug\netcoreapp3.1\ChessGame.dll
+C:\Users\tatli\Source\Repos\tayyip90\MyProjects\ChessGame\ChessGame\obj\Debug\netcoreapp3.1\ChessGame.pdb

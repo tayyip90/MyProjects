@@ -27,7 +27,7 @@ namespace ChessGame
             return string.Format("| {0,5}, {1,1} C: {2,5} |", row, column, color); 
         }
 
-        public uint getFieldID()
+        public uint GetFieldID()
         {
             return fieldID;
         }
@@ -36,7 +36,7 @@ namespace ChessGame
         /// Method to print the Field in the Console.
         /// </summary>
         /// <returns>a string that represents actual state of Field</returns>
-        public string getSymbol()
+        public string GetSymbol()
         {
             string symbol = string.Empty;
 
@@ -44,34 +44,34 @@ namespace ChessGame
             {
                 if(figureOnTheField != null)
                 {
-                    symbol = string.Format("| {0,5}, {1,5}, {2,5} |", figureOnTheField.getID() , figureOnTheField.getSymbol(), figureOnTheField.getColor());
+                    symbol = string.Format("| {0,5}, {1,5}, {2,5} |", GetFieldID(), figureOnTheField.getSymbol(), figureOnTheField.getColor());
                 }
             }
             else
             {
-                symbol = string.Format("| {0,5}, {1, 12} |", fieldID , "Empty");
+                symbol = string.Format("| {0,5}, {1, 12} |", GetFieldID(), "Empty");
             }
 
             return symbol;
         }
 
-        public void placeFigure(ChessFigure figure)
+        public void PlaceFigure(ChessFigure figure)
         {
             figureOnTheField = figure;
             isFieldOccupied = true;
         }
 
-        public bool getIsFieldOccupied()
+        public bool GetIsFieldOccupied()
         {
             return isFieldOccupied;
         }
 
-        public ChessFigure getChessFigure()
+        public ChessFigure GetChessFigure()
         {
             return this.figureOnTheField;
         }
 
-        public ChessFigure removeFigure()
+        public ChessFigure RemoveFigure()
         {
             ChessFigure figureToRemove = this.figureOnTheField;
             this.Reset();
@@ -84,12 +84,12 @@ namespace ChessGame
             figureOnTheField = null;
         }
 
-        public Constants.Row getRow()
+        public Constants.Row GetRow()
         {
             return this.row;
         }
 
-        public Constants.Column getColumn()
+        public Constants.Column GetColumn()
         {
             return this.column;
         }

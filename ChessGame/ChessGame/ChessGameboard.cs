@@ -82,7 +82,7 @@ namespace ChessGame
 
         public void setFigureToPosition(ChessFigure figure, int rowNumber, int columnNumber)
         {
-            Gameboard[rowNumber, columnNumber].placeFigure(figure);
+            Gameboard[rowNumber, columnNumber].PlaceFigure(figure);
         }
 
         public void setFigureToPosition(ChessFigure figure, Constants.Row row, Constants.Column column)
@@ -94,7 +94,7 @@ namespace ChessGame
 
             if (rowNumber != -1 | columnNumber != -1)
             {
-                Gameboard[Constants.convertRowEnumToRowNumberForGameboard(row), Constants.convertColumnEnumToColumnNumberForGameboard(column)].placeFigure(figure);
+                Gameboard[Constants.convertRowEnumToRowNumberForGameboard(row), Constants.convertColumnEnumToColumnNumberForGameboard(column)].PlaceFigure(figure);
             }
         }
 
@@ -175,7 +175,7 @@ namespace ChessGame
 
                 for (int column = 0; column < Constants.GAMEBOARDWIDTH; column++)
                 {
-                    line += Gameboard[row, column].getSymbol() + " ";
+                    line += Gameboard[row, column].GetSymbol() + " ";
                 }
 
                 Console.WriteLine(string.Format("{0,6}", rowHeader) + " " + line + " " + string.Format("{0,6}", rowHeader));
@@ -189,7 +189,7 @@ namespace ChessGame
 
         public void moveFigureToPosition(int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
         {
-            Gameboard[destinationFieldY, destinationFieldX].placeFigure(Gameboard[selectedFigureY, selectedFigureX].removeFigure());
+            Gameboard[destinationFieldY, destinationFieldX].PlaceFigure(Gameboard[selectedFigureY, selectedFigureX].RemoveFigure());
         }
     }
 }
