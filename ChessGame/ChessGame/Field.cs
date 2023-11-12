@@ -24,35 +24,26 @@ namespace ChessGame
 
         public override string ToString()
         {
-            return string.Format("| {0,5}, {1,1} C: {2,5} |", row, column, color); 
+            string symbol = string.Empty;
+
+            if (isFieldOccupied)
+            {
+                if (figureOnTheField != null)
+                {
+                    symbol = string.Format("|{0,2},{1,1},{2,5}|", GetFieldID(), figureOnTheField.getSymbol(), figureOnTheField.getColor());
+                }
+            }
+            else
+            {
+                symbol = string.Format("|{0,2},{1,7}|", GetFieldID(), "Empty");
+            }
+
+            return symbol;
         }
 
         public uint GetFieldID()
         {
             return fieldID;
-        }
-
-        /// <summary>
-        /// Method to print the Field in the Console.
-        /// </summary>
-        /// <returns>a string that represents actual state of Field</returns>
-        public string GetSymbol()
-        {
-            string symbol = string.Empty;
-
-            if (isFieldOccupied)
-            {
-                if(figureOnTheField != null)
-                {
-                    symbol = string.Format("| {0,5}, {1,5}, {2,5} |", GetFieldID(), figureOnTheField.getSymbol(), figureOnTheField.getColor());
-                }
-            }
-            else
-            {
-                symbol = string.Format("| {0,5}, {1, 12} |", GetFieldID(), "Empty");
-            }
-
-            return symbol;
         }
 
         public void PlaceFigure(ChessFigure figure)

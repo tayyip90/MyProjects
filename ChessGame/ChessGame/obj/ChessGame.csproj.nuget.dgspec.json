@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\tatli\\Source\\Repos\\tayyip90\\MyProjects\\ChessGame\\ChessGame\\ChessGame.csproj": {}
+    "C:\\Users\\tatli\\source\\repos\\tayyip90\\MyProjects\\ChessGame\\ChessGame\\ChessGame.csproj": {}
   },
   "projects": {
-    "C:\\Users\\tatli\\Source\\Repos\\tayyip90\\MyProjects\\ChessGame\\ChessGame\\ChessGame.csproj": {
+    "C:\\Users\\tatli\\source\\repos\\tayyip90\\MyProjects\\ChessGame\\ChessGame\\ChessGame.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\tatli\\Source\\Repos\\tayyip90\\MyProjects\\ChessGame\\ChessGame\\ChessGame.csproj",
+        "projectUniqueName": "C:\\Users\\tatli\\source\\repos\\tayyip90\\MyProjects\\ChessGame\\ChessGame\\ChessGame.csproj",
         "projectName": "ChessGame",
-        "projectPath": "C:\\Users\\tatli\\Source\\Repos\\tayyip90\\MyProjects\\ChessGame\\ChessGame\\ChessGame.csproj",
+        "projectPath": "C:\\Users\\tatli\\source\\repos\\tayyip90\\MyProjects\\ChessGame\\ChessGame\\ChessGame.csproj",
         "packagesPath": "C:\\Users\\tatli\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\tatli\\Source\\Repos\\tayyip90\\MyProjects\\ChessGame\\ChessGame\\obj\\",
+        "outputPath": "C:\\Users\\tatli\\source\\repos\\tayyip90\\MyProjects\\ChessGame\\ChessGame\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

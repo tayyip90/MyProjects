@@ -72,7 +72,7 @@ namespace ChessGame
             }
         }
 
-        public void resetGameboard()
+        public void ResetGameboard()
         {
             foreach(Field field in Gameboard)
             {
@@ -80,12 +80,12 @@ namespace ChessGame
             }
         }
 
-        public void setFigureToPosition(ChessFigure figure, int rowNumber, int columnNumber)
+        public void SetFigureToPosition(ChessFigure figure, int rowNumber, int columnNumber)
         {
             Gameboard[rowNumber, columnNumber].PlaceFigure(figure);
         }
 
-        public void setFigureToPosition(ChessFigure figure, Constants.Row row, Constants.Column column)
+        public void SetFigureToPosition(ChessFigure figure, Constants.Row row, Constants.Column column)
         {
             int rowNumber, columnNumber;
 
@@ -98,14 +98,14 @@ namespace ChessGame
             }
         }
 
-        public Field[,] getBoard(){
+        public Field[,] GetBoard(){
             return this.Gameboard;
         }
 
         /// <summary>
         /// prints only Board without Figures
         /// </summary>
-        public void printBoard()
+        public void PrintBoard()
         {
             string line;
             
@@ -142,7 +142,7 @@ namespace ChessGame
         /// <summary>
         /// prints only Board with Figures
         /// </summary>
-        public void printBoardWithFigures()
+        public void PrintBoardWithFigures()
         {
             string line;
 
@@ -152,7 +152,7 @@ namespace ChessGame
 
             foreach (Constants.Column columnHeader in Enum.GetValues(typeof(Constants.Column)))
             {
-                headerLine += string.Format("| {0,19} |", columnHeader) + " ";
+                headerLine += string.Format("|{0,10}|", columnHeader) + " ";
             }
 
             headerLine += "        ";
@@ -175,7 +175,7 @@ namespace ChessGame
 
                 for (int column = 0; column < Constants.GAMEBOARDWIDTH; column++)
                 {
-                    line += Gameboard[row, column].GetSymbol() + " ";
+                    line += Gameboard[row, column] + " ";
                 }
 
                 Console.WriteLine(string.Format("{0,6}", rowHeader) + " " + line + " " + string.Format("{0,6}", rowHeader));
@@ -187,7 +187,7 @@ namespace ChessGame
             Console.WriteLine(horizontalBorder);
         }
 
-        public void moveFigureToPosition(int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
+        public void MoveFigureToPosition(int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
         {
             Gameboard[destinationFieldY, destinationFieldX].PlaceFigure(Gameboard[selectedFigureY, selectedFigureX].RemoveFigure());
         }
