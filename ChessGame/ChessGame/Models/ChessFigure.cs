@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using static ChessGame.Constants;
 
-namespace ChessGame
+namespace ChessGame.Models
 {
     public abstract class ChessFigure
     {
@@ -13,24 +13,24 @@ namespace ChessGame
 
         public ChessFigure(char symbol, ColorEnum color, uint figureId)
         {
-            this.figurSymbol = symbol;
+            figurSymbol = symbol;
             this.color = color;
             this.figureId = figureId;
         }
 
-        public ColorEnum getColor()
+        public ColorEnum GetColor()
         {
-            return this.color;
+            return color;
         }
 
-        public char getSymbol()
+        public char GetSymbol()
         {
-            return this.figurSymbol;
+            return figurSymbol;
         }
 
-        public uint getID()
+        public uint GetID()
         {
-            return this.figureId;
+            return figureId;
         }
     }
 }

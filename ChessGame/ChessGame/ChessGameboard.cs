@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using ChessGame.Extensions;
+using ChessGame.Models;
 
 namespace ChessGame
 {
@@ -85,111 +87,28 @@ namespace ChessGame
             Gameboard[rowNumber, columnNumber].PlaceFigure(figure);
         }
 
-        public void SetFigureToPosition(ChessFigure figure, Constants.Row row, Constants.Column column)
-        {
-            int rowNumber, columnNumber;
-
-            rowNumber = Constants.convertRowEnumToRowNumberForGameboard(row);
-            columnNumber = Constants.convertColumnEnumToColumnNumberForGameboard(column);
-
-            if (rowNumber != -1 | columnNumber != -1)
-            {
-                Gameboard[Constants.convertRowEnumToRowNumberForGameboard(row), Constants.convertColumnEnumToColumnNumberForGameboard(column)].PlaceFigure(figure);
-            }
-        }
-
         public Field[,] GetBoard(){
             return this.Gameboard;
         }
 
-        /// <summary>
-        /// prints only Board without Figures
-        /// </summary>
-        public void PrintBoard()
-        {
-            string line;
-            
-            string headerLine = "       ";
-
-            foreach (Constants.Column columnHeader in Enum.GetValues(typeof(Constants.Column)))
-            {
-                headerLine += string.Format("| {0,17} |", columnHeader) + " ";
-            }
-
-            headerLine += "      ";
-
-            Console.WriteLine(headerLine);
-
-            Constants.Row rowHeader = Constants.Row.Eight;
-
-
-            for(int row = 0; row < Constants.GAMEBOARDHEIGHT; row++)
-            {
-                line = string.Empty;
-
-                for (int column = 0; column < Constants.GAMEBOARDWIDTH; column++)
-                {
-                    line += Gameboard[row, column] + " ";
-                }
-
-                Console.WriteLine(string.Format("{0,6}",rowHeader) + " " + line + " " + string.Format("{0,6}", rowHeader));
-                rowHeader--;
-            }
-
-            Console.WriteLine(headerLine);
+        public Field GetField(int i, int j) 
+        {  
+            return this.Gameboard[i, j];
         }
 
-        /// <summary>
-        /// prints only Board with Figures
-        /// </summary>
-        public void PrintBoardWithFigures()
+        public Field GetField(uint fieldId)
         {
-            string line;
-
-            string headerLine = "       ";
-
-            string horizontalBorder = string.Empty;
-
-            foreach (Constants.Column columnHeader in Enum.GetValues(typeof(Constants.Column)))
-            {
-                headerLine += string.Format("|{0,10}|", columnHeader) + " ";
-            }
-
-            headerLine += "        ";
-
-            for (int i = 0; i < headerLine.Length; i++)
-            {
-                horizontalBorder += "-";
-            }
-
-            Console.WriteLine(horizontalBorder);
-            Console.WriteLine(headerLine);
-            Console.WriteLine(horizontalBorder);
-
-            Constants.Row rowHeader = Constants.Row.Eight;
-
-
-            for (int row = 0; row < Constants.GAMEBOARDHEIGHT; row++)
-            {
-                line = string.Empty;
-
-                for (int column = 0; column < Constants.GAMEBOARDWIDTH; column++)
-                {
-                    line += Gameboard[row, column] + " ";
-                }
-
-                Console.WriteLine(string.Format("{0,6}", rowHeader) + " " + line + " " + string.Format("{0,6}", rowHeader));
-                Console.WriteLine(horizontalBorder);
-                rowHeader--;
-            }
-
-            Console.WriteLine(headerLine);
-            Console.WriteLine(horizontalBorder);
+            return GetBoard().FindMatching(field => field.GetFieldID() == fieldId);
         }
 
-        public void MoveFigureToPosition(int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
+        public bool IsFieldOccupied(uint fieldId)
         {
-            Gameboard[destinationFieldY, destinationFieldX].PlaceFigure(Gameboard[selectedFigureY, selectedFigureX].RemoveFigure());
+            return GetBoard().FindInTwoDimensional(field => field.GetFieldID() == fieldId && field.IsFieldOccupied());
+        }
+
+        public Field GetField(Constants.Row row, Constants.Column column)
+        {
+            return GetBoard().FindMatching(field => field.GetRow() == row && field.GetColumn() == column);
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using ChessGame.Extensions;
+using ChessGame.Models;
 
 namespace ChessGame
 {
@@ -26,17 +28,8 @@ namespace ChessGame
 
         private int turnNumber;
 
-        private bool isGameFinished;
-        private bool isPlayerResetTurn;
-
-        private bool startGame;
-        private bool quit;
-
         private bool figureIsChosen;
         private bool destinationFieldIsChosen;
-
-        private char input;
-        private bool inputIsCorrect;
 
         private int selectedFigureX;
         private int selectedFigureY;
@@ -60,22 +53,21 @@ namespace ChessGame
             gameboard = new ChessGameboard();
 
             players = new Player[2];
-
-            startGame = false;
-            quit = false;
         }
 
         public void Intro()
         {
+            bool quit = false;
+            bool newGame = false;
+
             while (!quit)
             {
-                PrintIntro();
+                PrintIntroText(out quit, out newGame);
 
-                if (startGame)
+                if (newGame)
                 {
                     Console.Clear();
-                    Start();
-                    startGame = false;
+                    Start(out quit);
                 }
             }
 
@@ -84,26 +76,25 @@ namespace ChessGame
             Console.WriteLine("");
         }
 
-        private void PrintIntro()
+        private void PrintIntroText(out bool quit, out bool newGame)
         {
-            inputIsCorrect = false;
+            quit = false;
+            newGame = false;
 
             Console.Clear();
 
             ShowMenu();
 
-            while (!inputIsCorrect)
+            while (!quit && !newGame)
             {
-                input = Console.ReadKey().KeyChar;
+                var input = Console.ReadKey().KeyChar;
 
                 if (input == Constants.NEWGAME)
                 {
-                    inputIsCorrect = true;
-                    startGame = true;
+                    newGame = true;
                 }
                 else if (input == Constants.QUIT)
                 {
-                    inputIsCorrect = true;
                     quit = true;
                 }
                 else if (input == Constants.HELP)
@@ -157,113 +148,109 @@ namespace ChessGame
             Console.WriteLine("");
         }
 
-        private void Start()
+        private void Start(out bool quit)
         {
+            bool resetTurn = false, gameFinished = false;
+            quit = false;
+            uint figureField = 0, destinationField = 0; 
+
             SetNameOfPlayers();
 
             Console.BackgroundColor = ConsoleColor.Blue;
 
             ResetGame();
 
-            while (!isGameFinished & !quit)
+            while (!gameFinished && !quit)
             {
-                while (!figureIsChosen & !destinationFieldIsChosen & !quit) {
+                do
+                {
                     // set reset turn false
-                    if (isPlayerResetTurn) isPlayerResetTurn = false;
+                    if (resetTurn) resetTurn = false;
 
-                    Console.WriteLine("Turn Number: " + turnNumber + " "+ players[playerTurn].getName() + "'s turn!" + " Color: " + players[playerTurn].getColor());
+                    Console.WriteLine("Turn Number: " + turnNumber + " " + players[playerTurn].GetName() + "'s turn!" + " Color: " + players[playerTurn].GetColor());
                     Console.WriteLine(string.Empty);
 
-                    gameboard.PrintBoardWithFigures();
+                    PrintPossibleMovements();
+                    PrintKingIsCheckedStatus();
+                    PrintLog();
+                    PrintWhiteFiguresOutOfGame();
+                    PrintBlackFiguresOutOfGame();
+                    PrintBoardWithFigures(gameboard);
 
                     PrintTextSelectFigureForPlayer();
-
-                    while (!figureIsChosen & !isPlayerResetTurn & !quit)
-                    {
-                        figureIsChosen = SelectFigure();
-                    }
+                    figureField = SelectFigure(out quit, out resetTurn);
 
                     PrintTextSelectDestinationField();
+                    destinationField = SelectDestination(out quit, out resetTurn);
 
-                    if (figureIsChosen)
-                    {
-                        while (!destinationFieldIsChosen & !isPlayerResetTurn & !quit)
-                        {
-                            destinationFieldIsChosen = SelectDestination();
-                        }
-                    }
-                }
+                } while (resetTurn);
 
-                if(figureIsChosen & destinationFieldIsChosen)
+                if (!quit)
                 {
-                    if (logic.CkeckWhetherMovementIsCorrect(gameboard.GetBoard(), selectedFigureX, selectedFigureY, destinationFieldX, destinationFieldY))
+                    if (logic.CkeckWhetherMovementIsCorrect(gameboard, players[playerTurn].GetColor(), figureField, destinationField))
                     {
                         string removedFigureText = string.Empty;
-                        string logText = players[playerTurn].getName() + " / " + players[playerTurn].getColor() + " Player moved his ";
 
-                        if (logic.IsFieldOccupied(gameboard.GetBoard(), destinationFieldY, destinationFieldX)){
-                            if(playerTurn == 0)
+                        logic.AddFigureIdToFirstMoveOverList(gameboard.GetField(figureField).GetChessFigure().GetID());
+
+                        string logText = players[playerTurn].GetName() + " / " + players[playerTurn].GetColor() + " Player moved his ";
+                        logText += gameboard.GetField(figureField).GetChessFigure().ToString() + " to "
+                            + gameboard.GetField(destinationField).GetRow() + ", " + gameboard.GetField(destinationField).GetColumn();
+
+                        ChessFigure removedFigure = players[playerTurn].MoveFigureToPosition(ref gameboard, figureField, destinationField);
+                        
+                        if (removedFigure != null)
+                        {
+                            if (players[playerTurn].GetColor() == Constants.ColorEnum.WHITE)
                             {
-                                removedFigureText = "removed the " + gameboard.GetBoard()[destinationFieldY, destinationFieldX].GetChessFigure().ToString() + " of " + players[1].getName();
-                                blackPlayerFiguresOutOfGame.Add(gameboard.GetBoard()[destinationFieldY, destinationFieldX].RemoveFigure());
+                                removedFigureText = "removed the " + removedFigure.ToString() + " of black player!";
+                                logic.removeFromPossibleMovementsBlackFigures(removedFigure.GetID());
+                                blackPlayerFiguresOutOfGame.Add(removedFigure);
                             }
                             else
                             {
-                                removedFigureText = "removed the " + gameboard.GetBoard()[destinationFieldY, destinationFieldX].GetChessFigure().ToString() + " of " + players[0].getName();
-                                whitePlayerFiguresOutOfGame.Add(gameboard.GetBoard()[destinationFieldY, destinationFieldX].RemoveFigure());
+                                removedFigureText = "removed the " + removedFigure.ToString() + " of white player!";
+                                logic.removeFromPossibleMovementsWhiteFigures(removedFigure.GetID());
+                                whitePlayerFiguresOutOfGame.Add(removedFigure);
                             }
                         }
 
-                        logic.AddFigureIdToFirstMoveOverList(gameboard.GetBoard(), selectedFigureY, selectedFigureX);
-
-                        logText += gameboard.GetBoard()[selectedFigureY, selectedFigureX].GetChessFigure().ToString() + " to "
-                            + gameboard.GetBoard()[destinationFieldY, destinationFieldX].GetRow() + ", " + gameboard.GetBoard()[destinationFieldY, destinationFieldX].GetColumn();
-
                         if (removedFigureText != string.Empty) logText += " and " + removedFigureText;
-
-                        gameboard.MoveFigureToPosition(selectedFigureX, selectedFigureY, destinationFieldX, destinationFieldY);
 
                         log.Add(logText);
 
                         SetNextPlayer();
 
-                        logic.RefreshPossibleMovementsDictionary(gameboard.GetBoard());
+                        logic.RefreshPossibleMovementsDictionary(gameboard);
 
                         if (whiteKingIsChecked)
                         {
-                            blackPlayerWon = whiteKingIsChecked = logic.CheckWhetherWhiteKingIsChecked(gameboard.GetBoard());
-                            isGameFinished = blackPlayerWon;
+                            blackPlayerWon = whiteKingIsChecked = logic.CheckWhetherWhiteKingIsChecked(gameboard);
+                            gameFinished = blackPlayerWon;
                         }
                         else
                         {
-                            whiteKingIsChecked = logic.CheckWhetherWhiteKingIsChecked(gameboard.GetBoard());
+                            whiteKingIsChecked = logic.CheckWhetherWhiteKingIsChecked(gameboard);
                         }
-                        
+
 
                         if (blackKingIsChecked)
                         {
-                            whitePlayerWon = blackKingIsChecked = logic.CheckWhetherBlackKingIsChecked(gameboard.GetBoard());
-                            isGameFinished = whitePlayerWon;
+                            whitePlayerWon = blackKingIsChecked = logic.CheckWhetherBlackKingIsChecked(gameboard);
+                            gameFinished = whitePlayerWon;
                         }
                         else
                         {
-                            blackKingIsChecked = logic.CheckWhetherBlackKingIsChecked(gameboard.GetBoard());
+                            blackKingIsChecked = logic.CheckWhetherBlackKingIsChecked(gameboard);
                         }
 
                         Console.Clear();
-
-                        PrintPossibleMovements();
-                        DisplayLog();
-                        PrintKingIsCheckedStatus();
                     }
                     else
                     {
                         Console.WriteLine("This is not a Correct movement!");
                     }
                 }
-
-                figureIsChosen = false;
-                destinationFieldIsChosen = false;
             }
 
             Console.BackgroundColor = ConsoleColor.Black;
@@ -279,6 +266,28 @@ namespace ChessGame
             }
         }
 
+        private void PrintBlackFiguresOutOfGame()
+        {
+            Console.WriteLine("Black Figures out of Game:");
+            Console.WriteLine();
+            foreach(ChessFigure figure in blackPlayerFiguresOutOfGame)
+            {
+                Console.WriteLine(figure);
+            }
+            Console.WriteLine();
+        }
+
+        private void PrintWhiteFiguresOutOfGame()
+        {
+            Console.WriteLine("White Figures out of Game:");
+            Console.WriteLine();
+            foreach (ChessFigure figure in whitePlayerFiguresOutOfGame)
+            {
+                Console.WriteLine(figure);
+            }
+            Console.WriteLine();
+        }
+
         private void DisplayPlayerWon()
         {
             Console.Clear();
@@ -286,11 +295,11 @@ namespace ChessGame
 
             if (whitePlayerWon)
             {
-                Console.WriteLine(players[0].getName() + " has won!");
+                Console.WriteLine(players[0].GetName() + " has won!");
             }
             if(blackPlayerWon)
             {
-                Console.WriteLine(players[1].getName() + " has won!");
+                Console.WriteLine(players[1].GetName() + " has won!");
             }
 
             Console.ReadKey();
@@ -400,189 +409,80 @@ namespace ChessGame
             Console.WriteLine("Select your Figure, that you want to move!");
         }
 
-        private bool SelectDestination()
+        private uint SelectDestination(out bool quit, out bool resetTurn)
         {
-            inputIsCorrect = false;
-            bool fieldIsChosen = false;
-            row = ' ';
-            column = ' ';
-            int rowNumber = -1;
-            int columnNumber = -1;
+            bool inputIsCorrect = false;
+            quit = false;
+            resetTurn = false;
+            uint fieldId = 0;
 
-            while (!inputIsCorrect & !quit & !isPlayerResetTurn)
+            while (!inputIsCorrect & !quit & !resetTurn)
             {
-                Console.WriteLine("Type in the row of the Destination Field!");
-                Console.WriteLine("Please Type a Number between 1 to 8!");
+                Console.WriteLine("Type in the FieldId of the Destination Field!");
+                string input = Console.ReadLine();
 
-                input = Console.ReadKey().KeyChar;
-                Console.WriteLine();
-
-                if (input == Constants.QUIT)
+                if (!string.IsNullOrEmpty(input))
                 {
-                    quit = true;
-                }
-                else if (input == Constants.RESETTURN)
-                {
-                    isPlayerResetTurn = true;
-                    figureIsChosen = false;
-                    destinationFieldIsChosen = false;
-                }
-                else
-                {
-                    rowNumber = Constants.convertRowCharToRowNumberForGameboard(input);
-
-                    if (rowNumber != -1) inputIsCorrect = true;
-                }
-            }
-
-            inputIsCorrect = false;
-
-            while (!inputIsCorrect & !quit & !isPlayerResetTurn)
-            {
-                Console.WriteLine("Type in the column, where your Figure is occupied!");
-                Console.WriteLine("Please Type a character between a to h!");
-
-                input = Console.ReadKey().KeyChar;
-                Console.WriteLine();
-
-                if (input == Constants.QUIT)
-                {
-                    quit = true;
-                }
-                else if (input == Constants.RESETTURN)
-                {
-                    isPlayerResetTurn = true;
-                    figureIsChosen = false;
-                    destinationFieldIsChosen = false;
-                }
-                else
-                {
-                    columnNumber = Constants.convertColumnCharToColumnNumberForGameboard(input);
-
-                    if (columnNumber != -1) inputIsCorrect = true;
-                }
-            }
-
-            if (quit | isPlayerResetTurn)
-            {
-                fieldIsChosen = false;
-            }
-            else
-            {
-                if(logic.IsFieldOccupied(gameboard.GetBoard(),rowNumber, columnNumber))
-                {
-                    if (logic.IsEnemyField(gameboard.GetBoard(), players[playerTurn].getColor(), rowNumber, columnNumber))
+                    if (input.Length == 1 && input.StartsWith(Constants.QUIT))
                     {
-                        fieldIsChosen = true;
-                        destinationFieldX = columnNumber;
-                        destinationFieldY = rowNumber;
+                        quit = true;
+                    }
+                    else if (input.Length == 1 && input.StartsWith(Constants.RESETTURN))
+                    {
+                        resetTurn = true;
                     }
                     else
                     {
-                        figureIsChosen = false;
-                        Console.WriteLine("The Destination Field is Occupied with your own Figure!");
+                        if (uint.TryParse(input, out fieldId) && gameboard.GetBoard().FindInTwoDimensional(field => field.GetFieldID() == fieldId)) inputIsCorrect = true;
+                        else Console.WriteLine("please enter a existing fieldId!");
                     }
                 }
                 else
                 {
-                    fieldIsChosen = true;
-                    destinationFieldX = columnNumber;
-                    destinationFieldY = rowNumber;
+                    Console.WriteLine("input was incorrect!");
+                    Console.WriteLine();
                 }
             }
 
-            return fieldIsChosen;
+            return fieldId;
         }
 
-        private bool SelectFigure()
+        private uint SelectFigure(out bool quit, out bool resetTurn)
         {
-            inputIsCorrect = false;
-            bool fieldIsChosen = false;
-            row = ' ';
-            column = ' ';
-            int rowNumber = -1;
-            int columnNumber = -1;
+            bool inputIsCorrect = false;
+            quit = false;
+            resetTurn = false;
+            uint fieldId = 0;
 
-            while (!inputIsCorrect & !quit & !isPlayerResetTurn)
+            while (!inputIsCorrect & !quit & !resetTurn)
             {
-                Console.WriteLine("Type in the row, where your Figure is occupied!");
-                Console.WriteLine("Please Type a Number between 1 to 8!");
+                Console.WriteLine("Type in the FieldId, where your Figure is occupied!");
+                var input = Console.ReadLine();
 
-                input = Console.ReadKey().KeyChar;
-                Console.WriteLine();
-
-                if (input == Constants.QUIT)
+                if (!string.IsNullOrEmpty(input))
                 {
-                    quit = true;
-                }
-                else if (input == Constants.RESETTURN)
-                {
-                    isPlayerResetTurn = true;
-                    figureIsChosen = false;
-                    destinationFieldIsChosen = false;
-                }
-                else
-                {
-                    rowNumber = Constants.convertRowCharToRowNumberForGameboard(input);
-
-                    if (rowNumber != -1) inputIsCorrect = true;
-                }
-            }
-
-            inputIsCorrect = false;
-
-            while (!inputIsCorrect & !quit & !isPlayerResetTurn)
-            {
-                Console.WriteLine("Type in the column, where your Figure is occupied!");
-                Console.WriteLine("Please Type a character between a to h!");
-
-                input = Console.ReadKey().KeyChar;
-                Console.WriteLine();
-
-                if (input == Constants.QUIT)
-                {
-                    quit = true;
-                }
-                else if (input == Constants.RESETTURN)
-                {
-                    isPlayerResetTurn = true;
-                    figureIsChosen = false;
-                    destinationFieldIsChosen = false;
-                }
-                else
-                {
-                    columnNumber = Constants.convertColumnCharToColumnNumberForGameboard(input);
-
-                    if (columnNumber != -1) inputIsCorrect = true;
-                }
-            }
-
-            if (quit | isPlayerResetTurn)
-            {
-                fieldIsChosen = false;
-            }
-            else
-            {
-                if(logic.IsFieldOccupied(gameboard.GetBoard(), rowNumber, columnNumber))
-                {
-                    if(logic.CheckWhetherFigureBelongsPlayer(gameboard.GetBoard(), players[playerTurn].getColor(), rowNumber, columnNumber))
+                    if (input.Length == 1 && input.StartsWith(Constants.QUIT))
                     {
-                        fieldIsChosen = true;
-                        selectedFigureX = columnNumber;
-                        selectedFigureY = rowNumber;
+                        quit = true;
+                    }
+                    else if (input.Length == 1 && input.StartsWith(Constants.RESETTURN))
+                    {
+                        resetTurn = true;
                     }
                     else
                     {
-                        Console.WriteLine("This Figure belongs the Enemy!");
+                        if (uint.TryParse(input, out fieldId) && gameboard.GetBoard().FindInTwoDimensional(field => field.GetFieldID() == fieldId)) inputIsCorrect = true;
+                        else Console.WriteLine("please enter a existing fieldId!");
                     }
                 }
                 else
                 {
-                    Console.WriteLine("There is no Figure to select!");
+                    Console.WriteLine("input was incorrect!");
+                    Console.WriteLine();
                 }
             }
 
-            return fieldIsChosen;
+            return fieldId;
         }
 
         private void ResetGame()
@@ -597,8 +497,6 @@ namespace ChessGame
             figureIsChosen = false;
             destinationFieldIsChosen = false;
 
-            isGameFinished = false;
-
             gameboard.ResetGameboard();
 
             allFigures.Clear();
@@ -611,17 +509,16 @@ namespace ChessGame
             CreateBlackPlayerFigures();
 
             logic.ResetFirstMoveOverList();
-            logic.RefreshPossibleMovementsDictionary(gameboard.GetBoard());
-
-            PrintPossibleMovements();
-            PrintKingIsCheckedStatus();
+            logic.RefreshPossibleMovementsDictionary(gameboard);
         }
 
-        private void DisplayLog()
+        private void PrintLog()
         {
-            foreach(string turn in log)
+            Console.WriteLine("Log:");
+            Console.WriteLine();
+            foreach (string logEntry in log)
             {
-                Console.WriteLine(turn);
+                Console.WriteLine(logEntry);
             }
 
             Console.WriteLine("");
@@ -630,53 +527,54 @@ namespace ChessGame
         private void CreateBlackPlayerFigures()
         {
             KingFigur blackPlayerKing = new KingFigur(Constants.ColorEnum.BLACK, ++figureId);
-            logic.AddFigureIdToPossibleMovementsBlackFiguresDictionary(blackPlayerKing.getID());
+            logic.AddFigureIdToPossibleMovementsBlackFiguresDictionary(blackPlayerKing.GetID());
             allFigures.Add(blackPlayerKing);
-            gameboard.SetFigureToPosition(blackPlayerKing, Constants.Row.Eight, Constants.Column.D);
+            gameboard.GetField(Constants.Row.Eight, Constants.Column.D).PlaceFigure(blackPlayerKing);
 
             QueenFigur blackPlayerQueen = new QueenFigur(Constants.ColorEnum.BLACK, ++figureId);
-            logic.AddFigureIdToPossibleMovementsBlackFiguresDictionary(blackPlayerQueen.getID());
+            logic.AddFigureIdToPossibleMovementsBlackFiguresDictionary(blackPlayerQueen.GetID());
             allFigures.Add(blackPlayerQueen);
-            gameboard.SetFigureToPosition(blackPlayerQueen, Constants.Row.Eight, Constants.Column.E);
+            gameboard.GetField(Constants.Row.Eight, Constants.Column.E).PlaceFigure(blackPlayerQueen);
 
             BishopFigur blackPlayerBishop1 = new BishopFigur(Constants.ColorEnum.BLACK, ++figureId);
             allFigures.Add(blackPlayerBishop1);
-            logic.AddFigureIdToPossibleMovementsBlackFiguresDictionary(blackPlayerBishop1.getID());
-            gameboard.SetFigureToPosition(blackPlayerBishop1, Constants.Row.Eight, Constants.Column.C);
+            logic.AddFigureIdToPossibleMovementsBlackFiguresDictionary(blackPlayerBishop1.GetID());
+            gameboard.GetField(Constants.Row.Eight, Constants.Column.C).PlaceFigure(blackPlayerBishop1);
 
             BishopFigur blackPlayerBishop2 = new BishopFigur(Constants.ColorEnum.BLACK, ++figureId);
-            logic.AddFigureIdToPossibleMovementsBlackFiguresDictionary(blackPlayerBishop2.getID());
+            logic.AddFigureIdToPossibleMovementsBlackFiguresDictionary(blackPlayerBishop2.GetID());
             allFigures.Add(blackPlayerBishop2);
-            gameboard.SetFigureToPosition(blackPlayerBishop2, Constants.Row.Eight, Constants.Column.F);
+            gameboard.GetField(Constants.Row.Eight, Constants.Column.F).PlaceFigure(blackPlayerBishop2);
 
             KnightFigur blackPlayerKnight1 = new KnightFigur(Constants.ColorEnum.BLACK, ++figureId);
-            logic.AddFigureIdToPossibleMovementsBlackFiguresDictionary(blackPlayerKnight1.getID());
+            logic.AddFigureIdToPossibleMovementsBlackFiguresDictionary(blackPlayerKnight1.GetID());
             allFigures.Add(blackPlayerKnight1);
-            gameboard.SetFigureToPosition(blackPlayerKnight1, Constants.Row.Eight, Constants.Column.B);
+            gameboard.GetField(Constants.Row.Eight, Constants.Column.B).PlaceFigure(blackPlayerKnight1);
 
             KnightFigur blackPlayerKnight2 = new KnightFigur(Constants.ColorEnum.BLACK, ++figureId);
-            logic.AddFigureIdToPossibleMovementsBlackFiguresDictionary(blackPlayerKnight2.getID());
+            logic.AddFigureIdToPossibleMovementsBlackFiguresDictionary(blackPlayerKnight2.GetID());
             allFigures.Add(blackPlayerKnight2);
-            gameboard.SetFigureToPosition(blackPlayerKnight2, Constants.Row.Eight, Constants.Column.G);
+            gameboard.GetField(Constants.Row.Eight, Constants.Column.G).PlaceFigure(blackPlayerKnight2);
 
             RookFigur blackPlayerRook1 = new RookFigur(Constants.ColorEnum.BLACK, ++figureId);
-            logic.AddFigureIdToPossibleMovementsBlackFiguresDictionary(blackPlayerRook1.getID());
+            logic.AddFigureIdToPossibleMovementsBlackFiguresDictionary(blackPlayerRook1.GetID());
             allFigures.Add(blackPlayerRook1);
-            gameboard.SetFigureToPosition(blackPlayerRook1, Constants.Row.Eight, Constants.Column.A);
+            gameboard.GetField(Constants.Row.Eight, Constants.Column.A).PlaceFigure(blackPlayerRook1);
 
             RookFigur blackPlayerRook2 = new RookFigur(Constants.ColorEnum.BLACK, ++figureId);
-            logic.AddFigureIdToPossibleMovementsBlackFiguresDictionary(blackPlayerRook2.getID());
+            logic.AddFigureIdToPossibleMovementsBlackFiguresDictionary(blackPlayerRook2.GetID());
             allFigures.Add(blackPlayerRook2);
-            gameboard.SetFigureToPosition(blackPlayerRook2, Constants.Row.Eight, Constants.Column.H);
+            gameboard.GetField(Constants.Row.Eight, Constants.Column.H).PlaceFigure(blackPlayerRook2);
 
             Constants.Column columnForPawns = Constants.Column.A;
 
             for (int i = 0; i < 8; i++)
             {
                 PawnFigur blackPlayerPawn = new PawnFigur(Constants.ColorEnum.BLACK, ++figureId);
-                logic.AddFigureIdToPossibleMovementsBlackFiguresDictionary(blackPlayerPawn.getID());
+                logic.AddFigureIdToPossibleMovementsBlackFiguresDictionary(blackPlayerPawn.GetID());
                 allFigures.Add(blackPlayerPawn);
-                gameboard.SetFigureToPosition(blackPlayerPawn, Constants.Row.Seven, columnForPawns);
+                gameboard.GetField(Constants.Row.Seven, columnForPawns).PlaceFigure(blackPlayerPawn);
+
                 columnForPawns++;
             }
         }
@@ -684,54 +582,141 @@ namespace ChessGame
         private void CreateWhitePlayerFigures()
         {
             KingFigur whitePlayerKing = new KingFigur(Constants.ColorEnum.WHITE, ++figureId);
-            logic.AddFigureIdToPossibleMovementsWhiteFiguresDictionary(whitePlayerKing.getID());
+            logic.AddFigureIdToPossibleMovementsWhiteFiguresDictionary(whitePlayerKing.GetID());
             allFigures.Add(whitePlayerKing);
-            gameboard.SetFigureToPosition(whitePlayerKing, Constants.Row.One, Constants.Column.D);
+            gameboard.GetField(Constants.Row.One, Constants.Column.D).PlaceFigure(whitePlayerKing);
 
             QueenFigur whitePlayerQueen = new QueenFigur(Constants.ColorEnum.WHITE, ++figureId);
-            logic.AddFigureIdToPossibleMovementsWhiteFiguresDictionary(whitePlayerQueen.getID());
+            logic.AddFigureIdToPossibleMovementsWhiteFiguresDictionary(whitePlayerQueen.GetID());
             allFigures.Add(whitePlayerQueen);
-            gameboard.SetFigureToPosition(whitePlayerQueen, Constants.Row.One, Constants.Column.E);
+            gameboard.GetField(Constants.Row.One, Constants.Column.E).PlaceFigure(whitePlayerQueen);
 
             BishopFigur whitePlayerBishop1 = new BishopFigur(Constants.ColorEnum.WHITE, ++figureId);
-            logic.AddFigureIdToPossibleMovementsWhiteFiguresDictionary(whitePlayerBishop1.getID());
+            logic.AddFigureIdToPossibleMovementsWhiteFiguresDictionary(whitePlayerBishop1.GetID());
             allFigures.Add(whitePlayerBishop1);
-            gameboard.SetFigureToPosition(whitePlayerBishop1, Constants.Row.One, Constants.Column.C);
+            gameboard.GetField(Constants.Row.One, Constants.Column.C).PlaceFigure(whitePlayerBishop1);
+
             BishopFigur whitePlayerBishop2 = new BishopFigur(Constants.ColorEnum.WHITE, ++figureId);
-            logic.AddFigureIdToPossibleMovementsWhiteFiguresDictionary(whitePlayerBishop2.getID());
+            logic.AddFigureIdToPossibleMovementsWhiteFiguresDictionary(whitePlayerBishop2.GetID());
             allFigures.Add(whitePlayerBishop2);
-            gameboard.SetFigureToPosition(whitePlayerBishop2, Constants.Row.One, Constants.Column.F);
+            gameboard.GetField(Constants.Row.One, Constants.Column.F).PlaceFigure(whitePlayerBishop2);
 
             KnightFigur whitePlayerKnight1 = new KnightFigur(Constants.ColorEnum.WHITE, ++figureId);
-            logic.AddFigureIdToPossibleMovementsWhiteFiguresDictionary(whitePlayerKnight1.getID());
+            logic.AddFigureIdToPossibleMovementsWhiteFiguresDictionary(whitePlayerKnight1.GetID());
             allFigures.Add(whitePlayerKnight1);
-            gameboard.SetFigureToPosition(whitePlayerKnight1, Constants.Row.One, Constants.Column.B);
+            gameboard.GetField(Constants.Row.One, Constants.Column.B).PlaceFigure(whitePlayerKnight1);
 
             KnightFigur whitePlayerKnight2 = new KnightFigur(Constants.ColorEnum.WHITE, ++figureId);
-            logic.AddFigureIdToPossibleMovementsWhiteFiguresDictionary(whitePlayerKnight2.getID());
+            logic.AddFigureIdToPossibleMovementsWhiteFiguresDictionary(whitePlayerKnight2.GetID());
             allFigures.Add(whitePlayerKnight2);
-            gameboard.SetFigureToPosition(whitePlayerKnight2, Constants.Row.One, Constants.Column.G);
+            gameboard.GetField(Constants.Row.One, Constants.Column.G).PlaceFigure(whitePlayerKnight2);
 
             RookFigur whitePlayerRook1 = new RookFigur(Constants.ColorEnum.WHITE, ++figureId);
-            logic.AddFigureIdToPossibleMovementsWhiteFiguresDictionary(whitePlayerRook1.getID());
+            logic.AddFigureIdToPossibleMovementsWhiteFiguresDictionary(whitePlayerRook1.GetID());
             allFigures.Add(whitePlayerRook1);
-            gameboard.SetFigureToPosition(whitePlayerRook1, Constants.Row.One, Constants.Column.A);
+            gameboard.GetField(Constants.Row.One, Constants.Column.A).PlaceFigure(whitePlayerRook1);
 
             RookFigur whitePlayerRook2 = new RookFigur(Constants.ColorEnum.WHITE, ++figureId);
-            logic.AddFigureIdToPossibleMovementsWhiteFiguresDictionary(whitePlayerRook2.getID());
+            logic.AddFigureIdToPossibleMovementsWhiteFiguresDictionary(whitePlayerRook2.GetID());
             allFigures.Add(whitePlayerRook2);
-            gameboard.SetFigureToPosition(whitePlayerRook2, Constants.Row.One, Constants.Column.H);
+            gameboard.GetField(Constants.Row.One, Constants.Column.H).PlaceFigure(whitePlayerRook2);
 
             Constants.Column columnForPawns = Constants.Column.A;
 
             for (int i = 0; i < 8; i++)
             {
                 PawnFigur whitePlayerPawn = new PawnFigur(Constants.ColorEnum.WHITE, ++figureId);
-                logic.AddFigureIdToPossibleMovementsWhiteFiguresDictionary(whitePlayerPawn.getID());
+                logic.AddFigureIdToPossibleMovementsWhiteFiguresDictionary(whitePlayerPawn.GetID());
                 allFigures.Add(whitePlayerPawn);
-                gameboard.SetFigureToPosition(whitePlayerPawn, Constants.Row.Two, columnForPawns);
+                gameboard.GetField(Constants.Row.Two, columnForPawns).PlaceFigure(whitePlayerPawn);
+
                 columnForPawns++;
             }
+        }
+
+        /// <summary>
+        /// prints only Board without Figures
+        /// </summary>
+        public void PrintBoard(ChessGameboard gameboard)
+        {
+            string line;
+
+            string headerLine = "       ";
+
+            foreach (Constants.Column columnHeader in Enum.GetValues(typeof(Constants.Column)))
+            {
+                headerLine += string.Format("| {0,17} |", columnHeader) + " ";
+            }
+
+            headerLine += "      ";
+
+            Console.WriteLine(headerLine);
+
+            Constants.Row rowHeader = Constants.Row.Eight;
+
+
+            for (int row = 0; row < Constants.GAMEBOARDHEIGHT; row++)
+            {
+                line = string.Empty;
+
+                for (int column = 0; column < Constants.GAMEBOARDWIDTH; column++)
+                {
+                    line += gameboard.GetBoard()[row, column] + " ";
+                }
+
+                Console.WriteLine(string.Format("{0,6}", rowHeader) + " " + line + " " + string.Format("{0,6}", rowHeader));
+                rowHeader--;
+            }
+
+            Console.WriteLine(headerLine);
+        }
+
+        /// <summary>
+        /// prints only Board with Figures
+        /// </summary>
+        public void PrintBoardWithFigures(ChessGameboard gameboard)
+        {
+            string line;
+
+            string headerLine = "       ";
+
+            string horizontalBorder = string.Empty;
+
+            foreach (Constants.Column columnHeader in Enum.GetValues(typeof(Constants.Column)))
+            {
+                headerLine += string.Format("|{0,10}|", columnHeader) + " ";
+            }
+
+            headerLine += "        ";
+
+            for (int i = 0; i < headerLine.Length; i++)
+            {
+                horizontalBorder += "-";
+            }
+
+            Console.WriteLine(horizontalBorder);
+            Console.WriteLine(headerLine);
+            Console.WriteLine(horizontalBorder);
+
+            Constants.Row rowHeader = Constants.Row.Eight;
+
+
+            for (int row = 0; row < Constants.GAMEBOARDHEIGHT; row++)
+            {
+                line = string.Empty;
+
+                for (int column = 0; column < Constants.GAMEBOARDWIDTH; column++)
+                {
+                    line += gameboard.GetBoard()[row, column] + " ";
+                }
+
+                Console.WriteLine(string.Format("{0,6}", rowHeader) + " " + line + " " + string.Format("{0,6}", rowHeader));
+                Console.WriteLine(horizontalBorder);
+                rowHeader--;
+            }
+
+            Console.WriteLine(headerLine);
+            Console.WriteLine(horizontalBorder);
         }
     }
 }

@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using System.Text;
 using static ChessGame.Constants;
 
-namespace ChessGame
+namespace ChessGame.Models
 {
-    public class KingFigur : ChessFigure
+    public class RookFigur : ChessFigure
     {
-        public KingFigur(ColorEnum color, uint figureId) : base(KINGSYMBOL, color, figureId)
+        public RookFigur(ColorEnum color, uint figureId) : base(ROOKSYMBOL, color, figureId)
         {
 
         }
 
         public override string ToString()
         {
-            return "King Figure";
+            return $"Rook, id:{GetID()}";
         }
     }
 }

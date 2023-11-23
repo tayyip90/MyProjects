@@ -58,44 +58,6 @@ namespace ChessGame
                                                 + "|                                                    *********************                                                       |\n"
                                                 + "+--------------------------------------------------------------------------------------------------------------------------------+\n\n";
 
-        public static int convertRowCharToRowNumberForGameboard(char row)
-        {
-            int rowNumber = -1;
-
-            switch (row)
-            {
-                case '1': rowNumber = 7; break;
-                case '2': rowNumber = 6; break;
-                case '3': rowNumber = 5; break;
-                case '4': rowNumber = 4; break;
-                case '5': rowNumber = 3; break;
-                case '6': rowNumber = 2; break;
-                case '7': rowNumber = 1; break;
-                case '8': rowNumber = 0; break;
-            }
-
-            return rowNumber;
-        }
-
-        public static int convertRowEnumToRowNumberForGameboard(Row row)
-        {
-            int rowNumber = -1;
-
-            switch (row)
-            {
-                case Row.One: rowNumber = 7; break;
-                case Row.Two: rowNumber = 6; break;
-                case Row.Three: rowNumber = 5; break;
-                case Row.Four: rowNumber = 4; break;
-                case Row.Five: rowNumber = 3; break;
-                case Row.Six: rowNumber = 2; break;
-                case Row.Seven: rowNumber = 1; break;
-                case Row.Eight: rowNumber = 0; break;
-            }
-
-            return rowNumber;
-        }
-
         public static int convertColumnCharToColumnNumberForGameboard(char column)
         {
             int columnNumber = -1;

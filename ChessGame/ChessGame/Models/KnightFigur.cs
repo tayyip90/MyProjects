@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using static ChessGame.Constants;
 
-namespace ChessGame
+namespace ChessGame.Models
 {
     public class KnightFigur : ChessFigure
     {
@@ -11,7 +11,7 @@ namespace ChessGame
 
         public override string ToString()
         {
-            return "Knight Figure";
+            return $"Knight, id:{GetID()}";
         }
     }
 }

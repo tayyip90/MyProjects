@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using ChessGame.Models;
 
 namespace ChessGame
 {
-   public class Field
+    public class Field
    {
         private uint fieldID;
         private bool isFieldOccupied;
@@ -30,7 +31,7 @@ namespace ChessGame
             {
                 if (figureOnTheField != null)
                 {
-                    symbol = string.Format("|{0,2},{1,1},{2,5}|", GetFieldID(), figureOnTheField.getSymbol(), figureOnTheField.getColor());
+                    symbol = string.Format("|{0,2},{1,1},{2,5}|", GetFieldID(), figureOnTheField.GetSymbol(), figureOnTheField.GetColor());
                 }
             }
             else
@@ -52,7 +53,7 @@ namespace ChessGame
             isFieldOccupied = true;
         }
 
-        public bool GetIsFieldOccupied()
+        public bool IsFieldOccupied()
         {
             return isFieldOccupied;
         }

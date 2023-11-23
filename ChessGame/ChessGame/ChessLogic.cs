@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text;
+using ChessGame.Extensions;
+using ChessGame.Models;
 
 namespace ChessGame
 {
@@ -18,6 +21,16 @@ namespace ChessGame
             ResetFirstMoveOverList();
         }
 
+        public void removeFromPossibleMovementsWhiteFigures(uint figureId)
+        {
+            possibleMovementsWhiteFigures.Remove(figureId);
+        }
+
+        public void removeFromPossibleMovementsBlackFigures(uint figureId)
+        {
+            possibleMovementsBlackFigures.Remove(figureId);
+        }
+
         public void ResetFirstMoveOverList()
         {
             firstMoveOver.Clear();
@@ -33,10 +46,10 @@ namespace ChessGame
             possibleMovementsWhiteFigures.Clear();
         }
 
-        public void AddFigureIdToFirstMoveOverList(Field[,] gameboard, int selectedFigureY, int selectedFigureX)
+        public void AddFigureIdToFirstMoveOverList(uint figureId)
         {
-            if (!firstMoveOver.Contains(gameboard[selectedFigureY, selectedFigureX].GetChessFigure().getID())) {
-                firstMoveOver.Add(gameboard[selectedFigureY, selectedFigureX].GetChessFigure().getID());
+            if (!firstMoveOver.Contains(figureId)) {
+                firstMoveOver.Add(figureId);
             }
         }
 
@@ -90,55 +103,52 @@ namespace ChessGame
             }
         }
 
-        public bool IsFieldOccupied(Field[,] gameboard, int rowNumber, int columnNumber)
+        public bool IsFieldOccupied(ChessGameboard gameboard, uint fieldId)
         {
-            return gameboard[rowNumber, columnNumber].GetIsFieldOccupied();
+            return gameboard.IsFieldOccupied(fieldId);
         }
 
-        public bool CheckWhetherFigureBelongsPlayer(Field[,] gameboard, Constants.ColorEnum color, int rowNumber, int columnNumber)
+        public bool CheckWhetherFigureBelongsPlayer(ChessGameboard gameboard, Constants.ColorEnum color, uint fieldId)
         {
-            bool sameColor = false;
-
-            if (gameboard[rowNumber, columnNumber].GetChessFigure().getColor() == color)
-            {
-                sameColor = true;
-            }
-
-            return sameColor;
+            return gameboard.GetBoard().FindInTwoDimensional(field => field.GetFieldID() == fieldId && field.GetChessFigure().GetColor() == color);
         }
 
-        public bool IsEnemyField(Field[,] gameboard, Constants.ColorEnum color, int rowNumber, int columnNumber)
+        public bool IsEnemyField(ChessGameboard gameboard, Constants.ColorEnum color, uint fieldId)
         {
             bool enemyField = false;
 
-            if(IsFieldOccupied(gameboard, rowNumber, columnNumber))
+            if(IsFieldOccupied(gameboard, fieldId))
             {
-                enemyField = !CheckWhetherFigureBelongsPlayer(gameboard, color, rowNumber, columnNumber);
+                enemyField = !CheckWhetherFigureBelongsPlayer(gameboard, color, fieldId);
             }
 
             return enemyField;
         }
 
-        public bool CkeckWhetherMovementIsCorrect(Field[,] gameboard, int selectedFigureX, int selectedFigureY, int destinationFieldX, int destinationFieldY)
+        public bool CkeckWhetherMovementIsCorrect(ChessGameboard gameboard, Constants.ColorEnum actualPlayerColor, uint figureField, uint destinationField)
         {
-            uint figureId = gameboard[selectedFigureY, selectedFigureX].GetChessFigure().getID();
-            Constants.ColorEnum color = gameboard[selectedFigureY, selectedFigureX].GetChessFigure().getColor();
-            uint fieldId = gameboard[destinationFieldY, destinationFieldX].GetFieldID();
-            bool isCorrect = false;
+            if (gameboard.GetField(figureField) == null) return false;
+            if (gameboard.GetField(destinationField) == null) return false;
 
-            if(color == Constants.ColorEnum.WHITE)
+            uint figureId = gameboard.GetField(figureField).GetChessFigure().GetID();
+
+            if (actualPlayerColor != gameboard.GetField(figureField).GetChessFigure().GetColor()) return false;
+
+            bool isCorrect;
+
+            if (actualPlayerColor == Constants.ColorEnum.WHITE)
             {
-                isCorrect = possibleMovementsWhiteFigures[figureId].Contains(fieldId);
+                isCorrect = possibleMovementsWhiteFigures[figureId].Contains(destinationField);
             }
             else
             {
-                isCorrect = possibleMovementsBlackFigures[figureId].Contains(fieldId);
+                isCorrect = possibleMovementsBlackFigures[figureId].Contains(destinationField);
             }
 
             return isCorrect;
         }
 
-        public void RefreshPossibleMovementsDictionary(Field[,] gameboard)
+        public void RefreshPossibleMovementsDictionary(ChessGameboard gameboard)
         {
             foreach (List<uint> fieldIds in possibleMovementsBlackFigures.Values)
             {
@@ -156,83 +166,78 @@ namespace ChessGame
                 {
                     bool foundFieldWithFigure;
 
-                    if (gameboard[i, j].GetIsFieldOccupied())
+                    if (gameboard.GetField(i,j).IsFieldOccupied())
                     {
-                        bool isFirstMovmentOver = firstMoveOver.Contains(gameboard[i, j].GetChessFigure().getID());
-                        Constants.ColorEnum color = gameboard[i, j].GetChessFigure().getColor();
-                        uint figureId = gameboard[i, j].GetChessFigure().getID();
+                        bool isFirstMovmentOver = firstMoveOver.Contains(gameboard.GetField(i,j).GetChessFigure().GetID());
+                        Constants.ColorEnum color = gameboard.GetField(i,j).GetChessFigure().GetColor();
+                        uint figureId = gameboard.GetField(i,j).GetChessFigure().GetID();
 
-                        switch (gameboard[i, j].GetChessFigure())
+                        switch (gameboard.GetField(i,j).GetChessFigure())
                         {
                             case PawnFigur p:
-                                bool enemyField;
 
                                 if (!isFirstMovmentOver)
                                 {
                                     if (color == Constants.ColorEnum.BLACK)
                                     {
-                                        enemyField = IsEnemyField(gameboard, color, i + 2, j);
-
-                                        if (!enemyField)
+                                        if (!IsEnemyField(gameboard, color, gameboard.GetField(i + 2, j).GetFieldID()))
                                         {
-                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i + 2, j].GetFieldID());
+                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i + 2, j).GetFieldID());
                                         }
                                     }
                                     else
                                     {
-                                        enemyField = IsEnemyField(gameboard, color, i - 2, j);
-
-                                        if (!enemyField)
+                                        if (!IsEnemyField(gameboard, color, gameboard.GetField(i - 2, j).GetFieldID()))
                                         {
-                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i - 2, j].GetFieldID());
+                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i - 2, j).GetFieldID());
                                         }
                                     }
                                 }
 
                                 if(i-1 >= 0)
                                 {
-                                    if(!IsFieldOccupied(gameboard, i - 1, j))
+                                    if(!IsFieldOccupied(gameboard, gameboard.GetField(i - 1, j).GetFieldID()))
                                     {
-                                        AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i - 1, j].GetFieldID());
+                                        AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i - 1, j).GetFieldID());
                                     }
 
                                     if (j - 1 >= 0)
                                     {
-                                        if (IsEnemyField(gameboard, color, i - 1, j - 1))
+                                        if (IsEnemyField(gameboard, color, gameboard.GetField(i - 1, j - 1).GetFieldID()))
                                         {
-                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i - 1, j - 1].GetFieldID());
+                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i - 1, j - 1).GetFieldID());
                                         }
                                     }
 
                                     if (j + 1 < Constants.GAMEBOARDWIDTH)
                                     {
-                                        if (IsEnemyField(gameboard, color, i - 1, j + 1))
+                                        if (IsEnemyField(gameboard, color, gameboard.GetField(i - 1, j + 1).GetFieldID()))
                                         {
-                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i - 1, j + 1].GetFieldID());
+                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i - 1, j + 1).GetFieldID());
                                         }
                                     }
                                 }
 
                                 if(i+1 < Constants.GAMEBOARDHEIGHT)
                                 {
-                                    if (!IsFieldOccupied(gameboard, i + 1, j))
+                                    if (!IsFieldOccupied(gameboard, gameboard.GetField(i + 1, j).GetFieldID()))
                                     {
-                                        AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i + 1, j].GetFieldID());
+                                        AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i + 1, j).GetFieldID());
                                     }
 
                                     if (j - 1 >= 0)
                                     {
-                                        if (IsEnemyField(gameboard, color, i + 1, j - 1))
+                                        if (IsEnemyField(gameboard, color, gameboard.GetField(i + 1, j - 1).GetFieldID()))
                                         {
-                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i + 1, j - 1].GetFieldID());
+                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i + 1, j - 1).GetFieldID());
                                         }
                                     }
 
                                     if (j + 1 < Constants.GAMEBOARDWIDTH)
                                     {
-                                        if (IsEnemyField(gameboard, color, i + 1, j + 1))
+                                        if (IsEnemyField(gameboard, color, gameboard.GetField(i + 1, j + 1).GetFieldID()))
                                         {
-                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i + 1, j + 1].GetFieldID());
+                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i + 1, j + 1).GetFieldID());
                                         }
                                     }
                                 }
@@ -247,18 +252,18 @@ namespace ChessGame
                                 {
                                     if (!foundFieldWithFigure)
                                     {
-                                        if(IsFieldOccupied(gameboard, i+k, j))
+                                        if(IsFieldOccupied(gameboard, gameboard.GetField(i + k, j).GetFieldID()))
                                         {
-                                            if(IsEnemyField(gameboard, color, i+k, j))
+                                            if(IsEnemyField(gameboard, color, gameboard.GetField(i + k, j).GetFieldID()))
                                             {
-                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i + k, j].GetFieldID());
+                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i + k, j).GetFieldID());
                                             }
 
                                             foundFieldWithFigure = true;
                                         }
                                         else
                                         {
-                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i + k, j].GetFieldID());
+                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i + k, j).GetFieldID());
                                         }
                                     }
                                 }
@@ -269,18 +274,18 @@ namespace ChessGame
                                 {
                                     if (!foundFieldWithFigure)
                                     {
-                                        if (IsFieldOccupied(gameboard, i + k, j))
+                                        if (IsFieldOccupied(gameboard, gameboard.GetField(i + k, j).GetFieldID()))
                                         {
-                                            if (IsEnemyField(gameboard, color, i + k, j))
+                                            if (IsEnemyField(gameboard, color, gameboard.GetField(i + k, j).GetFieldID()))
                                             {
-                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i + k, j].GetFieldID());
+                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i + k, j).GetFieldID());
                                             }
 
                                             foundFieldWithFigure = true;
                                         }
                                         else
                                         {
-                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i + k, j].GetFieldID());
+                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i + k, j).GetFieldID());
                                         }
                                     }
                                 }
@@ -291,18 +296,18 @@ namespace ChessGame
                                 {
                                     if (!foundFieldWithFigure)
                                     {
-                                        if (IsFieldOccupied(gameboard, i, j + k))
+                                        if (IsFieldOccupied(gameboard,  gameboard.GetField(i , j + k).GetFieldID()))
                                         {
-                                            if (IsEnemyField(gameboard, color, i, j + k))
+                                            if (IsEnemyField(gameboard, color,  gameboard.GetField(i , j + k).GetFieldID()))
                                             {
-                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i, j + k].GetFieldID());
+                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i , j + k).GetFieldID());
                                             }
 
                                             foundFieldWithFigure = true;
                                         }
                                         else
                                         {
-                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i, j + k].GetFieldID());
+                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i , j + k).GetFieldID());
                                         }
                                     }
                                 }
@@ -313,18 +318,18 @@ namespace ChessGame
                                 {
                                     if (!foundFieldWithFigure)
                                     {
-                                        if (IsFieldOccupied(gameboard, i, j + k))
+                                        if (IsFieldOccupied(gameboard,  gameboard.GetField(i , j + k).GetFieldID()))
                                         {
-                                            if (IsEnemyField(gameboard, color, i, j + k))
+                                            if (IsEnemyField(gameboard, color,  gameboard.GetField(i , j + k).GetFieldID()))
                                             {
-                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i, j + k].GetFieldID());
+                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i , j + k).GetFieldID());
                                             }
 
                                             foundFieldWithFigure = true;
                                         }
                                         else
                                         {
-                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i, j + k].GetFieldID());
+                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i , j + k).GetFieldID());
                                         }
                                     }
                                 }
@@ -337,31 +342,31 @@ namespace ChessGame
                                 {
                                     if(j - 1 >= 0)
                                     {
-                                        if (IsFieldOccupied(gameboard, i + 2, j - 1))
+                                        if (IsFieldOccupied(gameboard,  gameboard.GetField(i + 2 , j  - 1).GetFieldID()))
                                         {
-                                            if (IsEnemyField(gameboard, color, i + 2, j - 1))
+                                            if (IsEnemyField(gameboard, color,  gameboard.GetField(i + 2 , j  - 1).GetFieldID()))
                                             {
-                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i + 2, j - 1].GetFieldID());
+                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i + 2 , j  - 1).GetFieldID());
                                             }
                                         }
                                         else
                                         {
-                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i + 2, j - 1].GetFieldID());
+                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i + 2 , j  - 1).GetFieldID());
                                         }
                                     }
 
                                     if (j + 1 < Constants.GAMEBOARDWIDTH)
                                     {
-                                        if (IsFieldOccupied(gameboard, i + 2, j + 1))
+                                        if (IsFieldOccupied(gameboard, gameboard.GetField( i + 2, j + 1).GetFieldID()))
                                         {
-                                            if (IsEnemyField(gameboard, color, i + 2, j + 1))
+                                            if (IsEnemyField(gameboard, color, gameboard.GetField( i + 2, j + 1).GetFieldID()))
                                             {
-                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i + 2, j + 1].GetFieldID());
+                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i + 2, j + 1).GetFieldID());
                                             }
                                         }
                                         else
                                         {
-                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i + 2, j + 1].GetFieldID());
+                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i + 2, j + 1).GetFieldID());
                                         }
                                     }
                                 }
@@ -370,31 +375,31 @@ namespace ChessGame
                                 {
                                     if (j - 2 >= 0)
                                     {
-                                        if (IsFieldOccupied(gameboard, i + 1, j - 2))
+                                        if (IsFieldOccupied(gameboard,  gameboard.GetField( i + 1, j - 2).GetFieldID()))
                                         {
-                                            if (IsEnemyField(gameboard, color, i + 1, j - 2))
+                                            if (IsEnemyField(gameboard, color,  gameboard.GetField( i + 1, j - 2).GetFieldID()))
                                             {
-                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i + 1, j - 2].GetFieldID());
+                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField( i + 1, j - 2).GetFieldID());
                                             }
                                         }
                                         else
                                         {
-                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i + 1, j - 2].GetFieldID());
+                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField( i + 1, j - 2).GetFieldID());
                                         }
                                     }
 
                                     if (j + 2 < Constants.GAMEBOARDWIDTH)
                                     {
-                                        if (IsFieldOccupied(gameboard, i + 1, j + 2))
+                                        if (IsFieldOccupied(gameboard,  gameboard.GetField(i + 1, j + 2).GetFieldID()))
                                         {
-                                            if (IsEnemyField(gameboard, color, i + 1, j + 2))
+                                            if (IsEnemyField(gameboard, color,  gameboard.GetField(i + 1, j + 2).GetFieldID()))
                                             {
-                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i + 1, j + 2].GetFieldID());
+                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i + 1, j + 2).GetFieldID());
                                             }
                                         }
                                         else
                                         {
-                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i + 1, j + 2].GetFieldID());
+                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i + 1, j + 2).GetFieldID());
                                         }
                                     }
                                 }
@@ -403,31 +408,31 @@ namespace ChessGame
                                 {
                                     if (j - 1 >= 0)
                                     {
-                                        if (IsFieldOccupied(gameboard, i - 2, j - 1))
+                                        if (IsFieldOccupied(gameboard,  gameboard.GetField(i - 2, j - 1).GetFieldID()))
                                         {
-                                            if (IsEnemyField(gameboard, color, i - 2, j - 1))
+                                            if (IsEnemyField(gameboard, color,  gameboard.GetField(i - 2, j - 1).GetFieldID()))
                                             {
-                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i - 2, j - 1].GetFieldID());
+                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i - 2, j - 1).GetFieldID());
                                             }
                                         }
                                         else
                                         {
-                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i - 2, j - 1].GetFieldID());
+                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i - 2, j - 1).GetFieldID());
                                         }
                                     }
 
                                     if (j + 1 < Constants.GAMEBOARDWIDTH)
                                     {
-                                        if (IsFieldOccupied(gameboard, i - 2, j + 1))
+                                        if (IsFieldOccupied(gameboard,  gameboard.GetField(i - 2, j + 1).GetFieldID()))
                                         {
-                                            if (IsEnemyField(gameboard, color, i - 2, j + 1))
+                                            if (IsEnemyField(gameboard, color,  gameboard.GetField(i - 2, j + 1).GetFieldID()))
                                             {
-                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i - 2, j + 1].GetFieldID());
+                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i - 2, j + 1).GetFieldID());
                                             }
                                         }
                                         else
                                         {
-                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i - 2, j + 1].GetFieldID());
+                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i - 2, j + 1).GetFieldID());
                                         }
                                     }
                                 }
@@ -436,31 +441,31 @@ namespace ChessGame
                                 {
                                     if (j - 2 >= 0)
                                     {
-                                        if (IsFieldOccupied(gameboard, i - 1, j - 2))
+                                        if (IsFieldOccupied(gameboard,  gameboard.GetField(i - 1, j - 2).GetFieldID()))
                                         {
-                                            if (IsEnemyField(gameboard, color, i - 1, j - 2))
+                                            if (IsEnemyField(gameboard, color,  gameboard.GetField(i - 1, j - 2).GetFieldID()))
                                             {
-                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i - 1, j - 2].GetFieldID());
+                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i - 1, j - 2).GetFieldID());
                                             }
                                         }
                                         else
                                         {
-                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i - 1, j - 2].GetFieldID());
+                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i - 1, j - 2).GetFieldID());
                                         }
                                     }
 
                                     if (j + 2 < Constants.GAMEBOARDWIDTH)
                                     {
-                                        if (IsFieldOccupied(gameboard, i - 1, j + 2))
+                                        if (IsFieldOccupied(gameboard,  gameboard.GetField(i - 1, j + 2).GetFieldID()))
                                         {
-                                            if (IsEnemyField(gameboard, color, i - 1, j + 2))
+                                            if (IsEnemyField(gameboard, color,  gameboard.GetField(i - 1, j + 2).GetFieldID()))
                                             {
-                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i - 1, j + 2].GetFieldID());
+                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i - 1, j + 2).GetFieldID());
                                             }
                                         }
                                         else
                                         {
-                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i - 1, j + 2].GetFieldID());
+                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i - 1, j + 2).GetFieldID());
                                         }
                                     }
                                 }
@@ -474,18 +479,18 @@ namespace ChessGame
                                 {
                                     if (!foundFieldWithFigure)
                                     {
-                                        if (IsFieldOccupied(gameboard, i + k, j + k))
+                                        if (IsFieldOccupied(gameboard,  gameboard.GetField(i + k, j + k).GetFieldID()))
                                         {
-                                            if (IsEnemyField(gameboard, color, i + k, j + k))
+                                            if (IsEnemyField(gameboard, color,  gameboard.GetField(i + k, j + k).GetFieldID()))
                                             {
-                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i + k, j + k].GetFieldID());
+                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i + k, j + k).GetFieldID());
                                             }
 
                                             foundFieldWithFigure = true;
                                         }
                                         else
                                         {
-                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i + k, j + k].GetFieldID());
+                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i + k, j + k).GetFieldID());
                                         }
                                     }
                                 }
@@ -496,18 +501,18 @@ namespace ChessGame
                                 {
                                     if (!foundFieldWithFigure)
                                     {
-                                        if (IsFieldOccupied(gameboard, i + k, j - k))
+                                        if (IsFieldOccupied(gameboard,  gameboard.GetField(i + k, j - k).GetFieldID()))
                                         {
-                                            if (IsEnemyField(gameboard, color, i + k, j - k))
+                                            if (IsEnemyField(gameboard, color,  gameboard.GetField(i + k, j - k).GetFieldID()))
                                             {
-                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i + k, j - k].GetFieldID());
+                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i + k, j - k).GetFieldID());
                                             }
 
                                             foundFieldWithFigure = true;
                                         }
                                         else
                                         {
-                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i + k, j - k].GetFieldID());
+                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i + k, j - k).GetFieldID());
                                         }
                                     }
                                 }
@@ -518,18 +523,18 @@ namespace ChessGame
                                 {
                                     if (!foundFieldWithFigure)
                                     {
-                                        if (IsFieldOccupied(gameboard, i - k, j - k))
+                                        if (IsFieldOccupied(gameboard,  gameboard.GetField(i - k, j - k).GetFieldID()))
                                         {
-                                            if (IsEnemyField(gameboard, color, i - k, j - k))
+                                            if (IsEnemyField(gameboard, color,  gameboard.GetField(i - k, j - k).GetFieldID()))
                                             {
-                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i - k, j - k].GetFieldID());
+                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i - k, j - k).GetFieldID());
                                             }
 
                                             foundFieldWithFigure = true;
                                         }
                                         else
                                         {
-                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i - k, j - k].GetFieldID());
+                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i - k, j - k).GetFieldID());
                                         }
                                     }
                                 }
@@ -540,23 +545,24 @@ namespace ChessGame
                                 {
                                     if (!foundFieldWithFigure)
                                     {
-                                        if (IsFieldOccupied(gameboard, i - k, j + k))
+                                        if (IsFieldOccupied(gameboard,  gameboard.GetField(i - k, j + k).GetFieldID()))
                                         {
-                                            if (IsEnemyField(gameboard, color, i - k, j + k))
+                                            if (IsEnemyField(gameboard, color,  gameboard.GetField(i - k, j + k).GetFieldID()))
                                             {
-                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i - k, j + k].GetFieldID());
+                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i - k, j + k).GetFieldID());
                                             }
 
                                             foundFieldWithFigure = true;
                                         }
                                         else
                                         {
-                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i - k, j + k].GetFieldID());
+                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i - k, j + k).GetFieldID());
                                         }
                                     }
                                 }
 
                                 break;
+
                             case QueenFigur q:
 
                                 foundFieldWithFigure = false;
@@ -565,18 +571,18 @@ namespace ChessGame
                                 {
                                     if (!foundFieldWithFigure)
                                     {
-                                        if (IsFieldOccupied(gameboard, i + k, j + k))
+                                        if (IsFieldOccupied(gameboard,  gameboard.GetField(i + k, j + k).GetFieldID()))
                                         {
-                                            if (IsEnemyField(gameboard, color, i + k, j + k))
+                                            if (IsEnemyField(gameboard, color,  gameboard.GetField(i + k, j + k).GetFieldID()))
                                             {
-                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i + k, j + k].GetFieldID());
+                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i + k, j + k).GetFieldID());
                                             }
 
                                             foundFieldWithFigure = true;
                                         }
                                         else
                                         {
-                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i + k, j + k].GetFieldID());
+                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i + k, j + k).GetFieldID());
                                         }
                                     }
                                 }
@@ -587,18 +593,18 @@ namespace ChessGame
                                 {
                                     if (!foundFieldWithFigure)
                                     {
-                                        if (IsFieldOccupied(gameboard, i + k, j - k))
+                                        if (IsFieldOccupied(gameboard,  gameboard.GetField(i + k, j - k).GetFieldID()))
                                         {
-                                            if (IsEnemyField(gameboard, color, i + k, j - k))
+                                            if (IsEnemyField(gameboard, color,  gameboard.GetField(i + k, j - k).GetFieldID()))
                                             {
-                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i + k, j - k].GetFieldID());
+                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i + k, j - k).GetFieldID());
                                             }
 
                                             foundFieldWithFigure = true;
                                         }
                                         else
                                         {
-                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i + k, j - k].GetFieldID());
+                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i + k, j - k).GetFieldID());
                                         }
                                     }
                                 }
@@ -609,18 +615,18 @@ namespace ChessGame
                                 {
                                     if (!foundFieldWithFigure)
                                     {
-                                        if (IsFieldOccupied(gameboard, i - k, j - k))
+                                        if (IsFieldOccupied(gameboard,  gameboard.GetField(i - k, j - k).GetFieldID()))
                                         {
-                                            if (IsEnemyField(gameboard, color, i - k, j - k))
+                                            if (IsEnemyField(gameboard, color,  gameboard.GetField(i - k, j - k).GetFieldID()))
                                             {
-                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i - k, j - k].GetFieldID());
+                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i - k, j - k).GetFieldID());
                                             }
 
                                             foundFieldWithFigure = true;
                                         }
                                         else
                                         {
-                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i - k, j - k].GetFieldID());
+                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i - k, j - k).GetFieldID());
                                         }
                                     }
                                 }
@@ -631,18 +637,18 @@ namespace ChessGame
                                 {
                                     if (!foundFieldWithFigure)
                                     {
-                                        if (IsFieldOccupied(gameboard, i - k, j + k))
+                                        if (IsFieldOccupied(gameboard,  gameboard.GetField(i - k, j + k).GetFieldID()))
                                         {
-                                            if (IsEnemyField(gameboard, color, i - k, j + k))
+                                            if (IsEnemyField(gameboard, color,  gameboard.GetField(i - k, j + k).GetFieldID()))
                                             {
-                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i - k, j + k].GetFieldID());
+                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i - k, j + k).GetFieldID());
                                             }
 
                                             foundFieldWithFigure = true;
                                         }
                                         else
                                         {
-                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i - k, j + k].GetFieldID());
+                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i - k, j + k).GetFieldID());
                                         }
                                     }
                                 }
@@ -653,18 +659,18 @@ namespace ChessGame
                                 {
                                     if (!foundFieldWithFigure)
                                     {
-                                        if (IsFieldOccupied(gameboard, i + k, j))
+                                        if (IsFieldOccupied(gameboard, gameboard.GetField(i + k, j).GetFieldID()))
                                         {
-                                            if (IsEnemyField(gameboard, color, i + k, j))
+                                            if (IsEnemyField(gameboard, color, gameboard.GetField(i + k, j).GetFieldID()))
                                             {
-                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i + k, j].GetFieldID());
+                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i + k, j).GetFieldID());
                                             }
 
                                             foundFieldWithFigure = true;
                                         }
                                         else
                                         {
-                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i + k, j].GetFieldID());
+                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i + k, j).GetFieldID());
                                         }
                                     }
                                 }
@@ -675,18 +681,18 @@ namespace ChessGame
                                 {
                                     if (!foundFieldWithFigure)
                                     {
-                                        if (IsFieldOccupied(gameboard, i + k, j))
+                                        if (IsFieldOccupied(gameboard, gameboard.GetField(i + k, j).GetFieldID()))
                                         {
-                                            if (IsEnemyField(gameboard, color, i + k, j))
+                                            if (IsEnemyField(gameboard, color, gameboard.GetField(i + k, j).GetFieldID()))
                                             {
-                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i + k, j].GetFieldID());
+                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i + k, j).GetFieldID());
                                             }
 
                                             foundFieldWithFigure = true;
                                         }
                                         else
                                         {
-                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i + k, j].GetFieldID());
+                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i + k, j).GetFieldID());
                                         }
                                     }
                                 }
@@ -697,18 +703,18 @@ namespace ChessGame
                                 {
                                     if (!foundFieldWithFigure)
                                     {
-                                        if (IsFieldOccupied(gameboard, i, j + k))
+                                        if (IsFieldOccupied(gameboard, gameboard.GetField(i , j + k).GetFieldID()))
                                         {
-                                            if (IsEnemyField(gameboard, color, i, j + k))
+                                            if (IsEnemyField(gameboard, color,  gameboard.GetField(i , j + k).GetFieldID()))
                                             {
-                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i, j + k].GetFieldID());
+                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i , j + k).GetFieldID());
                                             }
 
                                             foundFieldWithFigure = true;
                                         }
                                         else
                                         {
-                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i, j + k].GetFieldID());
+                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i , j + k).GetFieldID());
                                         }
                                     }
                                 }
@@ -719,18 +725,18 @@ namespace ChessGame
                                 {
                                     if (!foundFieldWithFigure)
                                     {
-                                        if (IsFieldOccupied(gameboard, i, j + k))
+                                        if (IsFieldOccupied(gameboard,  gameboard.GetField(i , j + k).GetFieldID()))
                                         {
-                                            if (IsEnemyField(gameboard, color, i, j + k))
+                                            if (IsEnemyField(gameboard, color,  gameboard.GetField(i , j + k).GetFieldID()))
                                             {
-                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i, j + k].GetFieldID());
+                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i , j + k).GetFieldID());
                                             }
 
                                             foundFieldWithFigure = true;
                                         }
                                         else
                                         {
-                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i, j + k].GetFieldID());
+                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i , j + k).GetFieldID());
                                         }
                                     }
                                 }
@@ -740,120 +746,120 @@ namespace ChessGame
 
                                 if (i + 1 < Constants.GAMEBOARDHEIGHT)
                                 {
-                                    if (IsFieldOccupied(gameboard, i + 1, j))
+                                    if (IsFieldOccupied(gameboard, gameboard.GetField(i + 1, j).GetFieldID()))
                                     {
-                                        if (IsEnemyField(gameboard, color, i + 1, j))
+                                        if (IsEnemyField(gameboard, color, gameboard.GetField(i + 1, j).GetFieldID()))
                                         {
-                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i + 1, j].GetFieldID());
+                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i + 1, j).GetFieldID());
                                         }
                                     }
                                     else
                                     {
-                                        AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i + 1, j].GetFieldID());
+                                        AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i + 1, j).GetFieldID());
                                     }
 
                                     if (j + 1 < Constants.GAMEBOARDWIDTH)
                                     {
-                                        if (IsFieldOccupied(gameboard, i + 1, j + 1))
+                                        if (IsFieldOccupied(gameboard, gameboard.GetField(i + 1, j + 1).GetFieldID()))
                                         {
-                                            if (IsEnemyField(gameboard, color, i + 1, j + 1))
+                                            if (IsEnemyField(gameboard, color, gameboard.GetField(i + 1, j + 1).GetFieldID()))
                                             {
-                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i + 1, j + 1].GetFieldID());
+                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i + 1, j + 1).GetFieldID());
                                             }
                                         }
                                         else
                                         {
-                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i + 1, j + 1].GetFieldID());
+                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i + 1, j + 1).GetFieldID());
                                         }
                                     }
 
                                     if (j - 1 >= 0)
                                     {
-                                        if (IsFieldOccupied(gameboard, i + 1, j - 1))
+                                        if (IsFieldOccupied(gameboard, gameboard.GetField(i + 1, j - 1).GetFieldID()))
                                         {
-                                            if (IsEnemyField(gameboard, color, i + 1, j - 1))
+                                            if (IsEnemyField(gameboard, color, gameboard.GetField(i + 1, j - 1).GetFieldID()))
                                             {
-                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i + 1, j - 1].GetFieldID());
+                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i + 1, j - 1).GetFieldID());
                                             }
                                         }
                                         else
                                         {
-                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i + 1, j - 1].GetFieldID());
+                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i + 1, j - 1).GetFieldID());
                                         }
                                     }
                                 }
 
                                 if (j + 1 < Constants.GAMEBOARDWIDTH)
                                 {
-                                    if (IsFieldOccupied(gameboard, i, j + 1))
+                                    if (IsFieldOccupied(gameboard, gameboard.GetField(i, j + 1).GetFieldID()))
                                     {
-                                        if (IsEnemyField(gameboard, color, i, j + 1))
+                                        if (IsEnemyField(gameboard, color, gameboard.GetField(i, j + 1).GetFieldID()))
                                         {
-                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i, j + 1].GetFieldID());
+                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i, j + 1).GetFieldID());
                                         }
                                     }
                                     else
                                     {
-                                        AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i, j + 1].GetFieldID());
+                                        AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i, j + 1).GetFieldID());
                                     }
                                 }
 
                                 if (j - 1 >= 0)
                                 {
-                                    if (IsFieldOccupied(gameboard, i, j - 1))
+                                    if (IsFieldOccupied(gameboard, gameboard.GetField(i, j - 1).GetFieldID()))
                                     {
-                                        if (IsEnemyField(gameboard, color, i, j - 1))
+                                        if (IsEnemyField(gameboard, color, gameboard.GetField(i, j - 1).GetFieldID()))
                                         {
-                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i, j - 1].GetFieldID());
+                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i, j - 1).GetFieldID());
                                         }
                                     }
                                     else
                                     {
-                                        AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i, j  - 1].GetFieldID());
+                                        AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i, j - 1).GetFieldID());
                                     }
                                 }
 
                                 if (i - 1 >= 0)
                                 {
-                                    if (IsFieldOccupied(gameboard, i - 1, j))
+                                    if (IsFieldOccupied(gameboard, gameboard.GetField(i - 1, j).GetFieldID()))
                                     {
-                                        if (IsEnemyField(gameboard, color, i - 1, j))
+                                        if (IsEnemyField(gameboard, color, gameboard.GetField(i - 1, j).GetFieldID()))
                                         {
-                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i - 1, j].GetFieldID());
+                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i - 1, j).GetFieldID());
                                         }
                                     }
                                     else
                                     {
-                                        AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i - 1, j].GetFieldID());
+                                        AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i - 1, j).GetFieldID());
                                     }
 
                                     if (j + 1 < Constants.GAMEBOARDWIDTH)
                                     {
-                                        if (IsFieldOccupied(gameboard, i - 1, j + 1))
+                                        if (IsFieldOccupied(gameboard, gameboard.GetField(i - 1, j + 1).GetFieldID()))
                                         {
-                                            if (IsEnemyField(gameboard, color, i - 1, j + 1))
+                                            if (IsEnemyField(gameboard, color, gameboard.GetField(i - 1, j + 1).GetFieldID()))
                                             {
-                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i - 1, j + 1].GetFieldID());
+                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i - 1, j + 1).GetFieldID());
                                             }
                                         }
                                         else
                                         {
-                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i - 1, j + 1].GetFieldID());
+                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i - 1, j + 1).GetFieldID());
                                         }
                                     }
 
                                     if (j - 1 >= 0)
                                     {
-                                        if (IsFieldOccupied(gameboard, i - 1, j - 1))
+                                        if (IsFieldOccupied(gameboard, gameboard.GetField(i - 1, j - 1).GetFieldID()))
                                         {
-                                            if (IsEnemyField(gameboard, color, i - 1, j - 1))
+                                            if (IsEnemyField(gameboard, color, gameboard.GetField(i - 1, j - 1).GetFieldID()))
                                             {
-                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i - 1, j - 1].GetFieldID());
+                                                AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i - 1, j - 1).GetFieldID());
                                             }
                                         }
                                         else
                                         {
-                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard[i - 1, j - 1].GetFieldID());
+                                            AddFieldIdToPossibleMovementsDictionary(figureId, color, gameboard.GetField(i - 1, j - 1).GetFieldID());
                                         }
                                     }
                                 }
@@ -865,7 +871,7 @@ namespace ChessGame
             }
         }
 
-        public bool CheckWhetherBlackKingIsChecked(Field[,] gameboard)
+        public bool CheckWhetherBlackKingIsChecked(ChessGameboard gameboard)
         {
             bool isChecked = false;
 
@@ -893,6 +899,7 @@ namespace ChessGame
                     }
 
                     break;
+
                 case Constants.ColorEnum.WHITE:
 
                     foreach (List<uint> fieldIds in possibleMovementsBlackFigures.Values)
@@ -909,7 +916,7 @@ namespace ChessGame
             return fieldCanBeReached;
         }
 
-        private uint FindFieldIdOfKingWithColor(Field[,] gameboard, Constants.ColorEnum color)
+        private uint FindFieldIdOfKingWithColor(ChessGameboard gameboard, Constants.ColorEnum color)
         {
             uint fieldId = 0;
 
@@ -917,14 +924,14 @@ namespace ChessGame
             {
                 for(int j = 0; j < Constants.GAMEBOARDWIDTH; j++)
                 {
-                    if(IsFieldOccupied(gameboard, i, j))
+                    if(IsFieldOccupied(gameboard, gameboard.GetField(i, j).GetFieldID()))
                     {
-                        switch (gameboard[i,j].GetChessFigure())
+                        switch (gameboard.GetField(i, j).GetChessFigure())
                         {
                             case KingFigur k:
-                                if(gameboard[i, j].GetChessFigure().getColor() == color)
+                                if(gameboard.GetField(i,j).GetChessFigure().GetColor() == color)
                                 {
-                                    fieldId = gameboard[i, j].GetFieldID();
+                                    fieldId = gameboard.GetField(i,j).GetFieldID();
                                 }
                                 break;
                         }
@@ -935,7 +942,7 @@ namespace ChessGame
             return fieldId;
         }
 
-        public bool CheckWhetherWhiteKingIsChecked(Field[,] gameboard)
+        public bool CheckWhetherWhiteKingIsChecked(ChessGameboard gameboard)
         {
             bool isChecked = false;
 
@@ -955,10 +962,10 @@ namespace ChessGame
 
             foreach (uint key in possibleMovementsWhiteFigures.Keys)
             {
-                ChessFigure figure = allFigures.Find(x => x.getID() == key);
+                ChessFigure figure = allFigures.Find(x => x.GetID() == key);
 
                 possibleMovementOfFigure = string.Empty;
-                possibleMovementOfFigure += "Figure ID: " + figure.getID();
+                possibleMovementOfFigure += "Figure ID: " + figure.GetID();
 
                 switch (figure)
                 {
@@ -996,10 +1003,10 @@ namespace ChessGame
 
             foreach (uint key in possibleMovementsBlackFigures.Keys)
             {
-                ChessFigure figure = allFigures.Find(x => x.getID() == key);
+                ChessFigure figure = allFigures.Find(x => x.GetID() == key);
 
                 possibleMovementOfFigure = string.Empty;
-                possibleMovementOfFigure += "Figure ID: " + figure.getID();
+                possibleMovementOfFigure += "Figure ID: " + figure.GetID();
 
                 switch (figure)
                 {
@@ -1032,6 +1039,11 @@ namespace ChessGame
             }
 
             return possibleMovementsList;
+        }
+
+        public bool CheckFieldId(ChessGameboard gameboard, uint fieldId)
+        {
+            return gameboard.GetBoard().FindInTwoDimensional(field => field.GetFieldID() == fieldId);
         }
     }
 }
