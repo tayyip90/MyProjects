@@ -10,7 +10,6 @@ namespace ChessGame
     {
         private ChessLogic logic;
         private Player[] players;
-        private int playerTurn;
         private List<string> log;
 
         private ChessGameboard gameboard;
@@ -19,27 +18,6 @@ namespace ChessGame
         private List<ChessFigure> blackPlayerFiguresOutOfGame;
 
         private List<ChessFigure> allFigures;
-
-        private bool blackKingIsChecked;
-        private bool whiteKingIsChecked;
-
-        private bool blackPlayerWon;
-        private bool whitePlayerWon;
-
-        private int turnNumber;
-
-        private bool figureIsChosen;
-        private bool destinationFieldIsChosen;
-
-        private int selectedFigureX;
-        private int selectedFigureY;
-        private int destinationFieldX;
-        private int destinationFieldY;
-
-        private uint figureId;
-
-        private char row;
-        private char column;
 
         public Game()
         {
@@ -150,9 +128,9 @@ namespace ChessGame
 
         private void Start(out bool quit)
         {
-            bool resetTurn = false, gameFinished = false;
+            uint turnNumber = 1,figureField = 0, destinationField = 0, playerTurn = 0;
+            bool resetTurn = false, gameFinished = false, whiteKingIsChecked = false, blackKingIsChecked = false, blackPlayerWon = false, whitePlayerWon = false; 
             quit = false;
-            uint figureField = 0, destinationField = 0; 
 
             SetNameOfPlayers();
 
@@ -171,7 +149,7 @@ namespace ChessGame
                     Console.WriteLine(string.Empty);
 
                     PrintPossibleMovements();
-                    PrintKingIsCheckedStatus();
+                    PrintKingIsCheckedStatus(whiteKingIsChecked, blackKingIsChecked);
                     PrintLog();
                     PrintWhiteFiguresOutOfGame();
                     PrintBlackFiguresOutOfGame();
@@ -179,9 +157,11 @@ namespace ChessGame
 
                     PrintTextSelectFigureForPlayer();
                     figureField = SelectFigure(out quit, out resetTurn);
+                    Console.WriteLine();
 
                     PrintTextSelectDestinationField();
                     destinationField = SelectDestination(out quit, out resetTurn);
+                    Console.WriteLine();
 
                 } while (resetTurn);
 
@@ -219,36 +199,36 @@ namespace ChessGame
 
                         log.Add(logText);
 
-                        SetNextPlayer();
+                        whiteKingIsChecked = logic.CheckWhetherWhiteKingIsChecked(gameboard);
+                        blackKingIsChecked = logic.CheckWhetherBlackKingIsChecked(gameboard);
 
-                        logic.RefreshPossibleMovementsDictionary(gameboard);
-
-                        if (whiteKingIsChecked)
+                        if (whiteKingIsChecked && players[playerTurn].GetColor() == Constants.ColorEnum.WHITE)
                         {
                             blackPlayerWon = whiteKingIsChecked = logic.CheckWhetherWhiteKingIsChecked(gameboard);
                             gameFinished = blackPlayerWon;
                         }
-                        else
-                        {
-                            whiteKingIsChecked = logic.CheckWhetherWhiteKingIsChecked(gameboard);
-                        }
 
-
-                        if (blackKingIsChecked)
+                        if (blackKingIsChecked && players[playerTurn].GetColor() == Constants.ColorEnum.BLACK)
                         {
                             whitePlayerWon = blackKingIsChecked = logic.CheckWhetherBlackKingIsChecked(gameboard);
                             gameFinished = whitePlayerWon;
                         }
-                        else
-                        {
-                            blackKingIsChecked = logic.CheckWhetherBlackKingIsChecked(gameboard);
-                        }
+
+                        playerTurn = SetNextPlayer(playerTurn);
+
+                        turnNumber++;
+
+                        logic.RefreshPossibleMovementsDictionary(gameboard);
 
                         Console.Clear();
                     }
                     else
                     {
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("This is not a Correct movement!");
+                        Console.Beep();
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.WriteLine();
                     }
                 }
             }
@@ -262,7 +242,7 @@ namespace ChessGame
 
             if (blackPlayerWon | whitePlayerWon)
             {
-                DisplayPlayerWon();
+                DisplayPlayerWon(whitePlayerWon, blackPlayerWon);
             }
         }
 
@@ -288,7 +268,7 @@ namespace ChessGame
             Console.WriteLine();
         }
 
-        private void DisplayPlayerWon()
+        private void DisplayPlayerWon(bool whitePlayerWon, bool blackPlayerWon)
         {
             Console.Clear();
             Console.WriteLine(Constants.PLAYERWONTEXT);
@@ -297,6 +277,7 @@ namespace ChessGame
             {
                 Console.WriteLine(players[0].GetName() + " has won!");
             }
+
             if(blackPlayerWon)
             {
                 Console.WriteLine(players[1].GetName() + " has won!");
@@ -305,7 +286,7 @@ namespace ChessGame
             Console.ReadKey();
         }
 
-        private void PrintKingIsCheckedStatus()
+        private void PrintKingIsCheckedStatus(bool whiteKingIsChecked, bool blackKingIsChecked)
         {
             if (whiteKingIsChecked)
             {
@@ -385,18 +366,9 @@ namespace ChessGame
             Console.WriteLine(string.Empty);
         }
 
-        private void SetNextPlayer()
+        private uint SetNextPlayer(uint playerTurn)
         {
-            if(playerTurn == 0)
-            {
-                playerTurn = 1;
-            }
-            else
-            {
-                playerTurn = 0;
-            }
-
-            turnNumber++;
+            return playerTurn == 0 ? (uint)1 : (uint)0;
         }
 
         private void PrintTextSelectDestinationField()
@@ -487,16 +459,6 @@ namespace ChessGame
 
         private void ResetGame()
         {
-            whitePlayerWon = false;
-            blackPlayerWon = false;
-
-            turnNumber = 1;
-            playerTurn = 0;
-            figureId = 0;
-
-            figureIsChosen = false;
-            destinationFieldIsChosen = false;
-
             gameboard.ResetGameboard();
 
             allFigures.Clear();
@@ -505,11 +467,17 @@ namespace ChessGame
             whitePlayerFiguresOutOfGame.Clear();
             blackPlayerFiguresOutOfGame.Clear();
 
-            CreateWhitePlayerFigures();
-            CreateBlackPlayerFigures();
+            CreateFigures();
 
             logic.ResetFirstMoveOverList();
             logic.RefreshPossibleMovementsDictionary(gameboard);
+        }
+
+        private void CreateFigures()
+        {
+            uint figureId = 0;
+            figureId = CreateWhitePlayerFigures(figureId);
+            figureId = CreateBlackPlayerFigures(figureId);
         }
 
         private void PrintLog()
@@ -524,7 +492,7 @@ namespace ChessGame
             Console.WriteLine("");
         }
 
-        private void CreateBlackPlayerFigures()
+        private uint CreateBlackPlayerFigures(uint figureId)
         {
             KingFigur blackPlayerKing = new KingFigur(Constants.ColorEnum.BLACK, ++figureId);
             logic.AddFigureIdToPossibleMovementsBlackFiguresDictionary(blackPlayerKing.GetID());
@@ -577,9 +545,11 @@ namespace ChessGame
 
                 columnForPawns++;
             }
+
+            return figureId;
         }
 
-        private void CreateWhitePlayerFigures()
+        private uint CreateWhitePlayerFigures(uint figureId)
         {
             KingFigur whitePlayerKing = new KingFigur(Constants.ColorEnum.WHITE, ++figureId);
             logic.AddFigureIdToPossibleMovementsWhiteFiguresDictionary(whitePlayerKing.GetID());
@@ -632,6 +602,8 @@ namespace ChessGame
 
                 columnForPawns++;
             }
+
+            return figureId;
         }
 
         /// <summary>
